@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if title %}{{ title }}{% else %}Pangea Xero{% endif %}</title>
+</head>
+<body>
+<link rel="stylesheet" type="text/css" href="../bulma.css"/>
+
+<a href="{{ url_for('xero.index') }}">Index</a> |
+<a href="{{ url_for('xero.login') }}">Login</a> |
+<a href="{{ url_for('xero.logout') }}">Logout</a> |
+<a href="{{ url_for('xero.tenants') }}">Tenants</a> |
+<a href="{{ url_for('xero.get_invoices') }}">Invoices</a> |
+<a href="{{ url_for('xero.export_token') }}">Export Token</a> |
+<a href="{{ url_for('xero.refresh_token') }}">Refresh Token</a> |
+<section class="hero is-primary is-fullheight">
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title">{{ title }}</h1>
+
+            {% if sub_title %}<h3>{{ sub_title }}</h3>{% endif %}
+
+            {% block content %}{% endblock %}
+
+            {% if code %}
+                <pre class="prettyprint"><code class="language-javascript">{{ code }}</code></pre>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>-->
+</body>
+</html>

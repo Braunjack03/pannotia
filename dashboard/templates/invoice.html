@@ -1,0 +1,323 @@
+{% extends "xero.html" %}
+
+{% block content %}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <h2>LEAD</h2>
+    <input id="leadId" value="{{ lead_id }}">
+    <div style="display:grid;grid-template-columns: repeat(3, 1fr);">
+        <div></div>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        name
+                    </td>
+                    <td>
+                        <input class="customerData" size="50" value="{{ name }}" id="name">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        email address
+                    </td>
+                    <td>
+                        <input class="customerData" size="50" value="{{ email_address }}" id="email_address">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="currency_code">currency code</label>
+                    </td>
+                    <td>
+                        <select class="invoiceData" name="currency_code" id="currency_code">
+                            {% for item in currency_codes %}
+                                <option value="{{ item }}"
+                                        {% if item == currency_code %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        reference
+                    </td>
+                    <td>
+                        <input class="invoiceData" size="50" value="{{ reference }}" id="reference">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="status">status</label>
+                    </td>
+                    <td>
+                        <select class="invoiceData" name="status" id="status">
+                            {% for item in status %}
+                                <option value="{{ item }}"
+                                        {% if item == 'DRAFT' %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="branding_theme_id">Branding theme</label>
+                    </td>
+                    <td>
+                        <select class="invoiceData" name="branding_theme_id" id="branding_theme_id">
+                            {% for item in branding_theme_id %}
+                                <option value="{{ branding_theme_id[item] }}"
+                                        {% if item == 'pangea' %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Due Date
+                    </td>
+                    <td>
+                        <input class='invoiceData' size='50' id='due_date' type='date' value="{{ today }}">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div></div>
+    </div>
+    LINE ITEMS <br>
+    <table style="border: 1px solid black; table-layout: fixed; width: 97%; margin-left: auto; margin-right: auto">
+        <tr style="border: 1px solid black;">
+            <th style="width:30%; border: 1px solid black;">description</th>
+            <th style="width:10%; border: 1px solid black;">quantity</th>
+            <th style="width:10%; border: 1px solid black;">unit_amount</th>
+            <th style="width:10%; border: 1px solid black;">item_code</th>
+            <th style="width:10%; border: 1px solid black;">account_code</th>
+            <th style="width:10%; border: 1px solid black;">tax_type</th>
+            <th style="width:10%; border: 1px solid black;">discount_rate</th>
+            <th style="width:7%; border: 1px solid black;">delete</th>
+        </tr>
+    </table>
+    <div id="LineItemContainer">
+
+    </div>
+    <input size="50" id="ItemCode">
+    <br>
+
+    <input size="50" type="button" value="Create Invoice" id="createInvoice">
+    </div>
+    <script>
+        let items = [{
+            "AccountCode": "200-4",
+            "Description": "Shipping to {{ address }}",
+            "ItemCode": "1",
+            "LineAmount": 65.0,
+            "LineItemID": "554824ba-ecc2-4eb4-a053-94de70beacf8",
+            "Quantity": 1.0,
+            "TaxAmount": 3.82,
+            "TaxType": "OUTPUT",
+            "Tracking": [],
+            "UnitAmount": 65.0
+        },
+            {
+                "AccountCode": "210-4",
+                "Description": "Shipping to {{ address }}",
+                "ItemCode": "2",
+                "LineAmount": 65.0,
+                "LineItemID": "1874039c-e568-42e7-b375-a3b39c1024d6",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 65.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "Wooden Box",
+                "ItemCode": "3",
+                "LineAmount": 18.0,
+                "LineItemID": "cc72f472-247e-484a-8278-88eacc31b23b",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 18.0
+            },
+            {
+                "AccountCode": "200-1",
+                "Description": "430mm Custom Map of {{ map_name }}",
+                "ItemCode": "QQ",
+                "LineAmount": 560.0,
+                "LineItemID": "376bd642-2b82-4cac-ad15-4f5431315abe",
+                "Quantity": 1.0,
+                "TaxAmount": 50.91,
+                "TaxType": "OUTPUT",
+                "Tracking": [],
+                "UnitAmount": 560.0
+            },
+            {
+                "AccountCode": "200-1",
+                "Description": "600mm Custom Map of {{ map_name }}",
+                "ItemCode": "AA",
+                "LineAmount": 740.0,
+                "LineItemID": "1b0ded4b-95e9-4340-a120-4b1c56ecec92",
+                "Quantity": 1.0,
+                "TaxAmount": 67.27,
+                "TaxType": "OUTPUT",
+                "Tracking": [],
+                "UnitAmount": 740.0
+            },
+            {
+                "AccountCode": "200-1",
+                "Description": "830mm Custom Map of {{ map_name }}",
+                "ItemCode": "ZZ",
+                "LineAmount": 1280.0,
+                "LineItemID": "3aa26a8f-6d64-4bbe-b0f4-d82b9c15da44",
+                "Quantity": 1.0,
+                "TaxAmount": 116.36,
+                "TaxType": "OUTPUT",
+                "Tracking": [],
+                "UnitAmount": 1280.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "17.5\" Custom Map of {{ map_name }}",
+                "ItemCode": "WW",
+                "LineAmount": 440.0,
+                "LineItemID": "6a4a2a42-da05-4ff6-b652-977f8d862e9d",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 440.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "24\" Custom Map of {{ map_name }}",
+                "ItemCode": "SS",
+                "LineAmount": 590.0,
+                "LineItemID": "51845c3a-57d4-4789-9f74-5c338f735789",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 590.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "32\" Custom Map of {{ map_name }}",
+                "ItemCode": "XX",
+                "LineAmount": 980.0,
+                "LineItemID": "06fc4b7c-c006-435f-82e6-07c782eabaf8",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 980.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "430mm Custom Map of {{ map_name }}",
+                "ItemCode": "EE",
+                "LineAmount": 560.0,
+                "LineItemID": "0fc3aa59-34f5-4180-b28d-9df803898fbf",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 560.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "600mm Custom Map of {{ map_name }}",
+                "ItemCode": "DD",
+                "LineAmount": 740.0,
+                "LineItemID": "e46e8b3b-9db2-4e08-a8ce-005b1c4d8fbf",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 740.0
+            },
+            {
+                "AccountCode": "210-1",
+                "Description": "32in Custom Map of {{ map_name }}",
+                "ItemCode": "CC",
+                "LineAmount": 1280.0,
+                "LineItemID": "bf34c2b0-5668-492d-b33f-22e2a957107f",
+                "Quantity": 1.0,
+                "TaxAmount": 0.0,
+                "TaxType": "EXEMPTEXPORT",
+                "Tracking": [],
+                "UnitAmount": 1280.0
+            }];
+
+        function hostUrl() {
+            let baseurl = location.protocol + '//' + location.host + '/';
+            return baseurl;
+        }
+
+        function addLineItem(code) {
+            let selection = null;
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                if (item["ItemCode"] == code.toUpperCase()) {
+                    selection = item;
+                }
+            }
+            let lineItem = "<div><input class='itemData' style='width:30%;' value='" + selection.Description + "' id='description'>" +
+                "<input class='itemData' style='width:10%;' value='" + selection.Quantity + "' id='quantity'>" +
+                "<input class='itemData' style='width:10%;' value='" + selection.UnitAmount + "' id='unit_amount'>" +
+                "<input class='itemData' style='width:10%;' value='" + selection.ItemCode + "' id='item_code'>" +
+                "<input class='itemData' style='width:10%;' value='" + selection.AccountCode + "' id='account_code'>" +
+                "<input class='itemData' style='width:10%;' value='" + selection.TaxType + "' id='tax_type'>" +
+                "<input class='itemData' style='width:10%;' value='0' id='discount_rate' type=''>" +
+                "<input style='width:7%;' type='button' value='Delete Item' onclick='$(this).parent().remove()'><br></div>"
+            $("#LineItemContainer")[0].innerHTML += lineItem;
+        }
+
+        $("#createInvoice").click(() => {
+            let url = hostUrl() + 'xero/create_invoice/' + $("#leadId").val();
+            let req = new XMLHttpRequest();
+            let payload = {"customer": {}, "data": {}, "items": []}
+            $(".invoiceData").each((i) => {
+                payload["data"][$(".invoiceData")[i].id] = $(".invoiceData")[i].value;
+            })
+            $(".customerData").each((i) => {
+                payload["customer"][$(".customerData")[i].id] = $(".customerData")[i].value;
+            })
+            $("#LineItemContainer").children().each((i) => {
+                let line = $("#LineItemContainer").children()[i];
+                let item = {
+                    "account_code": line.children.account_code.value,
+                    "description": line.children.description.value,
+                    "item_code": line.children.item_code.value,
+                    "quantity": Number(line.children.quantity.value),
+                    "tax_type": line.children.tax_type.value,
+                    "unit_amount": Number(line.children.unit_amount.value),
+                    "discount_rate": Number(line.children.discount_rate.value)
+                }
+                payload["items"].push(item);
+            })
+
+            req.open("PUT", url);
+            req.onreadystatechange = () => {
+                if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+                    document.write(req.responseText);
+                }
+            }
+            req.send(JSON.stringify(payload));
+        });
+
+        $("#ItemCode").keypress((event) => {
+            console.log('keypress ' + event.which)
+            if (event.which == 13) {
+                addLineItem($("#ItemCode").val());
+            }
+        });
+
+        $(document).ready(() => {
+            addLineItem("{{ map_code }}");
+            addLineItem("{{ shipping_code }}");
+        });
+    </script>
+{% endblock %}

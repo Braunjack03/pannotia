@@ -1,0 +1,513 @@
+@font-face {
+
+    font-family: "GT-Walsheim";
+
+    font-style: normal;
+
+    font-weight: 400;
+
+    src: url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Regular.eot?#iefix") format("embedded-opentype"), url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Regular.woff") format("woff"), url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Regular.ttf") format("truetype");
+}
+
+@font-face {
+
+    font-family: "GT-Walsheim-Bold";
+
+    font-style: normal;
+
+    font-weight: 600;
+
+    src: url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Bold.eot?#iefix") format("embedded-opentype"), url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Bold.woff") format("woff"), url("https://www.pangeamaps.com/email/fonts/GT-Walsheim-Bold.ttf") format("truetype");
+}
+
+body {
+    color: #0a0a0a;
+    background-color: white;
+    font-family: "GT-Walsheim", serif;
+    pointer-events: none;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+h1 {
+    font-family: "GT-Walsheim-Bold", serif;
+    color: #8a7b53;
+    font-size: 56px;
+    text-align: center;
+}
+
+h2, h3, h4, h5, h6 {
+    color: #897a51 !important;
+}
+
+input[type="text"] {
+    color: #fafafa;
+    width: 200px;
+    margin: 2px 2px 2px 2px;
+    font-size: 16px;
+    background-color: #0a0a0a;
+    height: 22px;
+    padding-top: 4px;
+    border-radius: 19px;
+    text-align: center;
+    pointer-events: all;
+    border: 0 none;
+    padding: 0 22px;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+}
+
+.hiddenLabel {
+    display: none;
+}
+
+.MapActionButton {
+    color: #fafafa;
+    width: 120px;
+    margin: 5px 2px 5px 2px;
+    font-size: 16px;
+    background-color: #0a0a0a;
+    height: 20px;
+    padding-top: 4px;
+    border-radius: 19px;
+    text-align: center;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.MapActionButton:hover {
+    color: #897a51;
+}
+
+#ProgressButton {
+    width: 200px;
+}
+
+.Email {
+    margin-top: 10px;
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+    text-align: left;
+    padding: 40px 40px 40px 40px;
+    border-radius: 33px;
+    background-color: #cfb28a;
+    color: #0a0a0a;
+    font-size: 24px;
+}
+
+.parent {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.sidebar {
+    position: absolute;
+    pointer-events: all;
+    padding-left: 15px;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 420px;
+    overflow-x: hidden;
+    font-size: 26px;
+    z-index: 9;
+}
+
+.sidebar .sidebarItem {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.sidebar .subsidebarItem {
+    font-size: 16px;
+    padding-left: 20px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    text-align: center;
+    pointer-events: all;
+    cursor: default;
+    z-index: 0;
+}
+
+.header #HeaderEmail {
+    height: 10em;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    scrollbar-width: none;
+}
+
+.header #HeaderEmail::-webkit-scrollbar {
+    visibility: hidden;
+}
+
+.header #Name {
+    color: #cfb28a;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.header .HeaderDark {
+    font-size: 18px;
+    color: #0a0a0a;
+}
+
+.header .ActionBox {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 10px 10px 10px;
+}
+
+.ActionBox .SendAction {
+    background: #cfb28a;
+}
+
+.LeadLink {
+    cursor: pointer;
+    color: #0a0a0a;
+    font-size: 18px;
+}
+
+.LeadAction {
+    margin: 5px 5px 5px 5px;
+    color: #fafafa;
+    background-color: #cfb28a;
+    width: 165px;
+    height: 30px;
+    padding: 5px 0 0;
+    border-radius: 33px;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.LeadAction:hover {
+    color: #897a51;
+}
+
+.LeadCancel {
+    margin: 5px 5px 5px 5px;
+    color: #fafafa;
+    background-color: #cfb28a;
+    width: 180px;
+    height: 30px;
+    padding: 5px 0 0;
+    border-radius: 33px;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    display: none;
+}
+
+.LeadCancel:hover {
+    color: #897a51;
+}
+
+#ActionButton {
+    background-color: #897a51;
+}
+
+#ActionButton:hover {
+    color: #0a0a0a;
+}
+
+.main {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto auto;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.LeadInfo {
+    display: flex;
+    justify-content: center;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.LeadInfo .InfoItem {
+    display: grid;
+    grid-auto-columns: auto;
+    place-items: center;
+    cursor: pointer;
+}
+
+.TitleBox {
+    font-size: 16px !important;
+    background-color: #0a0a0a !important;
+    height: 24px !important;
+    padding-top: 4px !important;
+    border-radius: 19px !important;
+}
+
+.Progress {
+    place-items: center;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    pointer-events: all;
+    cursor: default;
+}
+
+.Progress .ProgressText {
+    text-align: center;
+    color: #cfb28a;
+}
+
+.Progress .ProgressButton {
+    color: #fafafa;
+    font-family: "GT-Walsheim-Bold", serif;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #cfb28a;
+    border-radius: 50%;
+    width: 100px;
+    height: 60px;
+    padding: 40px 0 0;
+    margin-bottom: -3px;
+    margin-left: 25px;
+    margin-right: 25px;
+    cursor: pointer;
+}
+
+.LeadData {
+    margin-top: 20px;
+    height: auto;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(3, minmax(350px, 1fr));
+}
+
+.LeadData .MapColumn {
+    text-align: center;
+    place-content: center;
+}
+
+.LeadData table {
+    width: 150px;
+    pointer-events: all;
+    cursor: default;
+}
+
+.LeadData .Column {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    justify-content: space-between;
+}
+
+.LeadData .DataColumn {
+    height: 180px;;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    pointer-events: all;
+    cursor: default;
+}
+
+.LeadData .ImageText {
+    align-self: center;
+    width: 300px;
+    left: 50%;
+    text-align: left;
+    pointer-events: all;
+    cursor: default;
+}
+
+.LeadData .ImageBox {
+    margin-bottom: 2px;
+    align-self: center;
+    border: 2px solid #0a0a0a;
+    width: 350px;
+    height: 350px;
+    z-index: -1;
+    pointer-events: all;
+    cursor: default;
+}
+
+.LeadData .MapBox {
+    margin-bottom: 2px;
+    align-self: center;
+    border: 2px solid #0a0a0a;
+    width: 350px;
+    height: 350px;
+    opacity: 0.95;
+    box-shadow: 0 0 0 1000vh rgba(255, 200, 100, 0.2);
+    grid-column-start: 1;
+    grid-column-end: 4;
+    z-index: -1;
+    pointer-events: all;
+}
+
+.LeadData .radioText {
+    width: 85px;
+}
+
+.MapEmailButton {
+    color: #fafafa;
+    width: 180px;
+    margin: 5px 2px 2px 2px;
+    font-size: 14px;
+    background-color: #cfb28a;
+    height: 20px;
+    padding: 5px 0 0;
+    border-radius: 19px;
+    text-align: center;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.MapEmailButton:hover {
+    color: #897a51;
+}
+
+.LeadActions {
+    margin-top: 20px;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    justify-items: center;
+    pointer-events: all;
+    cursor: default;
+}
+
+.SendAction {
+    margin: 5px 5px 5px 5px;
+    color: #fafafa;
+    background-color: #0a0a0a;
+    width: 265px;
+    height: 48px;
+    padding: 18px 0 0;
+    border-radius: 33px;
+    text-align: center;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.SendAction:hover {
+    color: #897a51;
+}
+
+.LeadDetails {
+    display: grid;
+    margin-top: 20px;
+    place-items: center;
+    pointer-events: all;
+    cursor: default;
+}
+
+.LeadDetails .Option {
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    grid-template: auto 1fr auto / auto 1fr auto;
+    margin-bottom: 5px;
+}
+
+.LeadDetails #LeadDescription {
+    width: 600px;
+}
+
+.LeadDetails #LeadAddress {
+    width: 600px;
+}
+
+.LeadDetails #DescriptionRadioButton {
+    width: 660px;
+}
+
+.LeadDetails #ShippingAddressRadio {
+    width: 660px;
+}
+
+.LeadDetails .UnitSelect {
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    grid-template: auto 1fr auto / auto 1fr auto;
+}
+
+.LeadDetails .Unit {
+    color: #fafafa;
+    background-color: #cfb28a;
+    width: 75px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 0 none;
+    padding-top: 4px;
+    margin: 2px 2px 2px 2px;
+    height: 22px;
+    border-radius: 19px;
+    pointer-events: all;
+}
+
+.LeadDetails .container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    width: 220px;
+    cursor: pointer;
+    font-size: 16px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.LeadDetails .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.LeadDetails .checkmark {
+    position: absolute;
+    margin-left: 5px;
+    top: 0;
+    left: 0;
+    height: 21px;
+    width: 21px;
+}
+
+.LeadDetails .container input:checked ~ .checkmark {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1px solid #0a0a0a;
+    background: #c42540 none repeat scroll 0 0;
+}
+
+.LeadDetails .container .checkmark {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1px solid #0a0a0a;
+}
+
+.LeadEmails {
+    margin-top: 20px;
+    place-items: center;
+    pointer-events: all;
+    cursor: default;
+}
+

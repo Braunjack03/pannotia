@@ -1,0 +1,14 @@
+Hi {{ name }},
+
+I hope you're having a great week.
+
+I've just finished your map design!
+
+{{ design }}
+
+It is pretty cool how the contours undulate around the shoreline.
+
+Let me know what you think so we will get started cutting the wood.
+
+Regards,
+Tom

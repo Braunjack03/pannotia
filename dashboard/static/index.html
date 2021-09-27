@@ -1,0 +1,409 @@
+<!DOCTYPE html PUBLIC>
+<html lang="">
+<head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"/>
+    <title>Pangea Dashboard</title>
+    <link href="styles.css" rel="stylesheet" type="text/css"/>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js" type="application/javascript"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css" rel="stylesheet" type="text/css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div id="map">
+</div>
+<div class="parent" id="parent">
+    <div class="sidebar">
+        <a href="/">
+            <img src="Logo.png" alt="Pangea">
+        </a>
+        <div id="Counter" style="cursor: pointer;" class="sidebarItem">-/-</div>
+        <div id="New" style="cursor: pointer;" onclick="getLeadType('New')" class="sidebarItem">NEW LEADS: -</div>
+        <div id="Quoted" style="cursor: pointer;" onclick="getLeadType('Quoted')" class="sidebarItem">QUOTED LEADS: -
+        </div>
+        <div id="Design" style="cursor: pointer;" onclick="getLeadType('Design')" class="sidebarItem">DESIGNED LEADS: -
+        </div>
+        <div id="Invoiced" style="cursor: pointer;" onclick="getLeadType('Invoice')" class="sidebarItem">INVOICED LEADS:
+            -
+        </div>
+        <div id="Production" style="cursor: pointer;" onclick="getLeadType('Production')" class="sidebarItem">IN
+            PRODUCTION LEADS: -
+        </div>
+        <div id="Other" style="cursor: pointer;" onclick="getLeadType('Other')" class="sidebarItem">
+            OTHER: -
+        </div>
+    </div>
+    <div class="main">
+        <div class="header">
+            <div id="NewLead">
+                <span id="Name">LOADING</span> <br/>
+                <span id="LeadType" class="HeaderDark">(New Email)</span> <br/>
+                <span id="LeadNumbers">
+                <span id="Lead1" class="LeadLink">LEAD 1</span>, <span id="Lead2" class="LeadLink">LEAD 2</span>, <span
+                        id="Lead3" class="LeadLink">LEAD 3</span> <br/>
+                </span>
+                <span id="MapName" class="HeaderDark">Map or Place</span>
+            </div>
+            <div class="Email" id="HeaderEmail">
+                Text from the last email will be here
+            </div>
+            <div class="ActionBox">
+                <div id="SpecialButton" class="SendAction">Compose Email</div>
+                <div id="ActionButton" class="SendAction">Action Button</div>
+                <div id="CancelButton" class="SendAction">Cancel</div>
+                <div id="ReadEmail" class="LeadCancel">Mark Email Read</div>
+                <div id="BadEmail" class="LeadCancel">Bad Email/Human</div>
+                <div id="Landscape" class="LeadCancel">Landscape</div>
+                <div id="NoData" class="LeadCancel">No Design Data</div>
+                <div id="BadDesign" class="LeadCancel">Didn't Like Design</div>
+                <div id="TooExxy" class="LeadCancel">Too Expensive</div>
+                <div id="NotInterested" class="LeadCancel">Not Interested</div>
+                <div id="Hold" class="LeadCancel">Short Hold</div>
+                <div id="LongHold" class="LeadCancel">Long Hold</div>
+            </div>
+        </div>
+        <div class="LeadInfo">
+            <div id="LeftArrow" class="InfoItem"><img onclick="previousLead()" src="images/LeftArrowShape.png" alt=""/>
+            </div>
+            <div id="Center" class="InfoItem">
+                <label class="hiddenLabel" for="Id"></label><input type="text" id="Id" class="TitleBox" value="LOADING">
+                <label class="hiddenLabel" for="Email"></label><input type="text" id="Email" class="TitleBox"
+                                                                      value="LOADING">
+            </div>
+            <div id="RightArrow" class="InfoItem"><img onclick="nextLead()" src="images/RightArrowShape.png" alt=""/>
+            </div>
+        </div>
+        <div id="ProgressOff" class="Progress" style="display:grid">
+            <div id="ProgressButton" class="MapActionButton">Progress
+            </div>
+        </div>
+        <div id="ProgressOn" class="Progress" style="display:none">
+            <div id="layer_1" class="ProgressText">
+                1
+                <div id="BoundaryButton" class="ProgressButton">
+                    Boundary
+                </div>
+                <div id="BoundaryArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="BoundarySummaryText1" class="ProgressText">
+                    Lead (13/6)<br/>
+                    Reminder (15/6)<br/>
+                    Revision (15/6)
+                </div>
+            </div>
+            <div id="layer_2" class="ProgressText">
+                2
+                <div id="QuotedButton" class="ProgressButton">
+                    Quoted
+                </div>
+                <div id="QuotedArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="QuotedSummaryText1" class="ProgressText">
+                    Quoted (14/6)<br/>
+                    Reminder (15/6)<br/>
+                    Revision (15/6)
+                </div>
+            </div>
+            <div id="layer_3" class="ProgressText">
+                3
+                <div id="DesignButton" class="ProgressButton">
+                    Design
+                </div>
+                <div id="DesignArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="DesignSummaryText1" class="ProgressText">
+                    Design (14/6)<br/>
+                    Reminder (15/6)<br/>
+                    Revision (15/6)
+                </div>
+            </div>
+            <div id="layer_4" class="ProgressText">
+                4
+                <div id="InvoiceButton" class="ProgressButton">
+                    Invoiced
+                </div>
+                <div id="InvoiceArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="InvoiceSummaryText1" class="ProgressText">
+                    Design (14/6)<br/>
+                    Reminder (15/6)<br/>
+                    Revision (15/6)
+                </div>
+            </div>
+            <div id="layer_5" class="ProgressText">
+                5
+                <div id="PaidButton" class="ProgressButton">
+                    Paid
+                </div>
+                <div id="PaidArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="PaidSummaryText1" class="ProgressText">
+                    Paid (14/6)<br/>
+                    <br/>
+                    <br/>
+                </div>
+            </div>
+            <div id="layer_6" class="ProgressText">
+                6
+                <div id="ProductionButton" class="ProgressButton">
+                    Production
+                </div>
+                <div id="ProductionArmShape" class="Arm"><img src="images/ArmShape.png" alt=""/></div>
+                <div id="ProductionSummaryTex" class="ProgressText">
+                    Sent Australia (14/6)<br/>
+                    <br/>
+                    <br/>
+                </div>
+            </div>
+        </div>
+        <div class="LeadData">
+            <div style="pointer-events: auto" class="Column">
+                <div id="DesignText" class="ImageText">Design 1</div>
+                <img id="DesignBox" class="ImageBox" src="" alt="">
+                <div class="DataColumn">
+                    <div>
+                        <table id="DesignRadioButtons">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <input class="DesignButton" id="Design1RadioButton" name="EditOptions" value="0"
+                                           type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="Design1RadioButton" class="radioText">Design 1</label><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input class="DesignButton" id="Design2RadioButton" name="EditOptions" value="1"
+                                           type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="Design2RadioButton" class="radioText">Design 2</label><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input class="DesignButton" id="Design3RadioButton" name="EditOptions" value="2"
+                                           type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="Design3RadioButton" class="radioText">Design 3</label><br/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="MapActionButton"><a href="" id="LabelButton" class="MapActionButton"
+                                                        target="_blank">Label</a></div>
+                        <div class="MapActionButton"><a href="" id="DownloadButton" class="MapActionButton"
+                                                        target="_blank">Download</a>
+                        </div>
+                        <div id="UploadButton" class="MapActionButton">Upload</div>
+                    </div>
+                </div>
+            </div>
+            <div class="Column">
+                <div id="BoundaryHeader" class="ImageText">New Boundary</div>
+                <div id="BoundaryBox" class="MapBox"></div>
+                <div class="DataColumn">
+                    <div>
+                        <div id="RefreshBoundary" class="MapEmailButton">Refresh Boundary</div>
+                        <div id="RefreshContours" class="MapEmailButton">Refresh Contours</div>
+                        <table id="BoundaryRadioButtons">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <input id="ZoomRadioButton" name="EditOptions" value="zoom" type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="ZoomRadioButton" class="radioText">Zoom</label><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="CentererdRadioButton" name="EditOptions" value="centered" type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="CentererdRadioButton" class="radioText">Centered</label><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="MoreDetailRadioButto" name="EditOptions" value="detail" type="radio"/>
+                                </td>
+                                <td>
+                                    <label for="MoreDetailRadioButto" class="radioText">More Detail</label><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="OtherRadioButton" name="EditOptions" value="other" type="radio"/>
+                                </td>
+                                </td>
+                                <td>
+                                    <label for="OtherRadioButton" class="radioText">Other</label><br/>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div id="LibraryButton" class="MapActionButton">Library</div>
+                        <div id="MarkButton" class="MapActionButton">Mark</div>
+                    </div>
+                </div>
+            </div>
+            <div style="pointer-events: auto" class="Column">
+                <div id="DataHeader" class="ImageText">Data</div>
+                <img id="DataBox" class="ImageBox" src="" alt="">
+                <div class="DataColumn">
+                    <div>
+                        <a href="" target="_blank" id="DataBoxLink">
+                            <div id="SendtoDrawerButton" class="MapEmailButton">Send To Drawer</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="LeadActions">
+            <div id="SaveLeadDetailsButton" class="SendAction">Save</div>
+            <div id="CreateInvoiceButton" class="SendAction">Invoice</div>
+        </div>
+        <div class="LeadDetails">
+            <label class="hiddenLabel" for="IdDetail"></label><input type="text" id="IdDetail" class="TitleBox">
+            <label class="hiddenLabel" for="EmailDetail"></label><input type="text" id="EmailDetail" class="TitleBox">
+
+            <div class="Option">
+                <div id="LeadNameField"><label class="hiddenLabel" for="LeadName"></label><input id="LeadName"
+                                                                                                 style="width:160px"
+                                                                                                 type="text"
+                                                                                                 class="DetailText"/>
+                </div>
+                <label id="LeadNameRadioButton" class="container">NAME <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="MarkLatLong"><label class="hiddenLabel" for="LeadMark"></label><input id="LeadMark"
+                                                                                               style="width:160px"
+                                                                                               type="text"
+                                                                                               class="DetailText"/>
+                </div>
+                <label id="MarkRadioButton" class="container">MARK<input type="checkbox" class="UpdateCheck"/> <span
+                        class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Label"><label class="hiddenLabel" for="LeadLabel"></label><input id="LeadLabel"
+                                                                                          style="width:160px"
+                                                                                          type="text"
+                                                                                          class="DetailText"/></div>
+                <label id="LabelRadioButton" class="container">LABEL
+                    <input type="checkbox" class="UpdateCheck"/> <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div class="UnitSelect">
+                    <div id="Metric" class="Unit" style="color:#897a51">Metric</div>
+                    <div id="Imperial" class="Unit">Imperial</div>
+                </div>
+                <label id="UnitsRadioButton" class="container">UNITS <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Size"><label class="hiddenLabel" for="LeadSize"></label><input id="LeadSize"
+                                                                                        list="LeadSizeOptions"
+                                                                                        style="width:160px"
+                                                                                        type="text" class="DetailText"/>
+                </div>
+                <datalist id="LeadSizeOptions">
+                    <option value="0">430x430</option>
+                    <option value="1">600x600</option>
+                    <option value="2">830x830</option>
+                </datalist>
+                <label id="SizeRadioButton" class="container">SIZE <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="ShippingCountry"><label class="hiddenLabel" for="LeadCountry"></label><input id="LeadCountry"
+                                                                                                      style="width:160px"
+                                                                                                      type="text"
+                                                                                                      class="DetailText"/>
+                </div>
+                <label id="ShippingCountryRadio" class="container">SHIPPING COUNTRY <input type="checkbox"
+                                                                                           class="UpdateCheck"/> <span
+                        class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="ShippingAddress"><label class="hiddenLabel" for="LeadAddress"></label><input id="LeadAddress"
+                                                                                                      type="text"
+                                                                                                      class="DetailText"/>
+                </div>
+                <label id="ShippingAddressRadio" class="container">SHIPPING ADDRESS <input type="checkbox"
+                                                                                           class="UpdateCheck"/> <span
+                        class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div class="UnitSelect">
+                    <div id="Render" class="Unit" style="color:#897a51">Render</div>
+                    <div id="Logo" class="Unit">Logo</div>
+                </div>
+                <input type="hidden" id="RenderValue" value="">
+                <label id="RenderRadioButton" class="container">RENDER <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Invoice"><label class="hiddenLabel" for="LeadInvoice"></label><input id="LeadInvoice"
+                                                                                              style="width:160px"
+                                                                                              type="text"
+                                                                                              class="DetailText"/></div>
+                <label id="InvoiceRadioButton" class="container">INVOICE <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Price"><label class="hiddenLabel" for="LeadPrice"></label><input id="LeadPrice"
+                                                                                          style="width:160px"
+                                                                                          type="text"
+                                                                                          class="DetailText"/></div>
+                <label id="PriceRadioButton" class="container">PRICE <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Currency"><label class="hiddenLabel" for="LeadCurrency"></label>
+                    <select id="LeadCurrency" style="width:160px" type="text" class="DetailText">
+                        <option value="AUD">AUD</option>
+                        <option value="CAD">CAD</option>
+                        <option value="NZD">NZD</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                </div>
+                <label id="CurrencyRadioButton" class="container">CURRENCY <input type="checkbox" class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="Description"><label class="hiddenLabel" for="LeadDescription"></label><input
+                        id="LeadDescription"
+                        type="text" class="DetailText"/></div>
+                <label id="DescriptionRadioButton" class="container">DESCRIPTION <input type="checkbox"
+                                                                                        class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+            <div class="Option">
+                <div id="ProductionCountry"><label class="hiddenLabel" for="LeadProduction"></label><input
+                        id="LeadProduction" style="width:160px" type="text" class="DetailText"/></div>
+                <label id="ProductionRadioButton" class="container">PRODUCTION <input type="checkbox"
+                                                                                      class="UpdateCheck"/>
+                    <span class="checkmark"></span> </label>
+            </div>
+        </div>
+        <div id="Emails" class="LeadEmails">
+            <div class="Email">
+                To:buzz@pangeamaps.com <br/>
+                From:custom@pangeamaps.com <br/>
+                BLAH BLAH BLAH
+            </div>
+            <div class="Email">
+                To:custom@pangeamaps.com <br/>
+                From:buzz@pangeamaps.com <br/>
+                NAH NAH NAH
+            </div>
+        </div>
+    </div>
+</div>
+<script src="scripts/main.js" type="application/javascript"></script>
+</body>
+</html>

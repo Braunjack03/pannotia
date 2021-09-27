@@ -1,0 +1,6 @@
+CLIENT_ID = ""
+CLIENT_SECRET = ""
+BUILDER_URL = ""
+USER = "Dev"
+ENV = "dev"
+EMAIL = "buzz@pangeamaps.com"
