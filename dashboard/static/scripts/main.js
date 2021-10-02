@@ -174,6 +174,7 @@ function updateLead(action) {
     let size = $("#SizeRadioButton")[0].children[0].checked;
     let country = $("#ShippingCountryRadio")[0].children[0].checked;
     let address = $("#ShippingAddressRadio")[0].children[0].checked;
+    let phonenumber =  $("#PhoneNumberRadio")[0].children[0].checked;
     let render = $("#RenderRadioButton")[0].children[0].checked;
     let invoice = $("#InvoiceRadioButton")[0].children[0].checked;
     let price = $("#PriceRadioButton")[0].children[0].checked;
@@ -214,6 +215,7 @@ function updateLead(action) {
     }
     if (invoice) updates.invoice = $("#LeadInvoice").val();
     if (price) updates.price = $("#LeadPrice").val();
+    if (phonenumber) updates.phonenumber = $("#LeadNumber").val();
     if (currency) updates.currency = $("#LeadCurrency").val().toLowerCase();
     if (description) updates.description = $("#LeadDescription").val();
     if (production) updates.production = $("#LeadProduction").val();
@@ -372,6 +374,7 @@ function clearLead(leadEmail) {
     $("#ShippingAddress").val('');
     $("#Invoice").val('');
     $("#Price").val('');
+    $("#PhoneNumber").val('');
     $("#Currency").val('');
     $("#Description").val('');
     $("#ProductionCountry").val('');
@@ -469,6 +472,8 @@ function getLead(leadId) {
                 $("#LeadAddress").val(activeLead.address.line1 + "," + activeLead.address.city + "," + activeLead.address.state + "," + activeLead.address.postal_code);
                 $("#LeadInvoice").val(activeLead.invoice);
                 $("#LeadPrice").val(activeLead.price);
+                $("#LeadNumber").val(activeLead.phonenumber);
+                console.log(activeLead.phonenumber)
                 $("#LeadCurrency").val(activeLead.currency.toUpperCase());
                 $("#LeadDescription").val(activeLead.description);
                 $("#LeadProduction").val(activeLead.production);
