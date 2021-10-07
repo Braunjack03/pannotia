@@ -339,11 +339,59 @@
                 <label id="ShippingAddressRadio" class="container">SHIPPING ADDRESS <input type="checkbox"
                                                                                            class="UpdateCheck"/> <span
                         class="checkmark"></span> </label>
+                <input type="hidden" id="addressCity" name="addressCity" value=""/>
+                <input type="hidden" id="addressState" name="addressState" value=""/>
+                <input type="hidden" id="addressPostalcode" name="addressPostalcode" value=""/>
+                <input type="hidden" id="street_address" name="street_address" value=""/>
             </div>
             <script>
                 function init() {
                    var input = document.getElementById('LeadAddress');
-                   var autocomplete = new google.maps.places.Autocomplete(input);
+                   var addressCity = document.getElementById('addressCity');
+                   
+                    const options = {
+                        types: ["address"],
+                        };
+                    var autocomplete = new google.maps.places.Autocomplete(input, options);
+                    google.maps.event.addListener(autocomplete, 'place_changed', function() 
+                    {
+                        var place = autocomplete.getPlace();
+                        for (const component of place.address_components) {
+                            const componentType = component.types[0];
+
+                            switch (componentType) {
+
+                                case "postal_code": {
+                                    document.getElementById('addressPostalcode').value = `${component.long_name}`;
+                                    break;
+                                }
+
+                                case "postal_code_suffix": {
+                                    document.getElementById('addressPostalcode').value = `${document.getElementById('addressPostalcode').value}-${component.long_name}`;
+                                    break;
+                                }
+                                
+                                case "administrative_area_level_1": {
+                                    document.getElementById('addressState').value = component.short_name;
+                                    break;
+                                }
+                                case "administrative_area_level_2": {
+                                    document.getElementById('addressCity').value = component.short_name;
+                                    break;
+                                } 
+                                case "street_address": {
+                                    document.getElementById('street_address').value = component.short_name;
+                                    break;
+                                }
+                                case "country": {
+                                    document.querySelector("#ShippingCountry").value = component.long_name;
+                                    break;
+                                }
+                            }
+                        }
+                    })
+                
+
                 }
              google.maps.event.addDomListener(window, 'load', init);
              </script>

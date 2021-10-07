@@ -205,12 +205,18 @@ function updateLead(action) {
     }
     if (size) updates.size = $("#LeadSize").val();
     if (address) {
-        let address = $("#LeadAddress").val().split(',');
+        let rawAddress = $("#LeadAddress").val()
+        let addressPostalcode = $("#addressPostalcode").val()
+        let addressState = $("#addressState").val()
+        let addressCity = $("#addressCity").val()
+        let street_address = $("#street_address").val()
+        
         updates.address = {};
-        updates.address.line1 = address[0];
-        updates.address.city = address[1];
-        updates.address.state = address[2];
-        updates.address.postal_code = address[3];
+        updates.address.rawAddress = rawAddress
+        updates.address.line1 = street_address;
+        updates.address.city = addressCity;
+        updates.address.state = addressState;
+        updates.address.postal_code = addressPostalcode;
         if (country) updates.address.country = $("#LeadCountry").val();
     }
     if (invoice) updates.invoice = $("#LeadInvoice").val();
