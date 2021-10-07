@@ -475,7 +475,7 @@ function getLead(leadId) {
                 }
                 $("#LeadSize").val(activeLead.size);
                 $("#LeadCountry").val(activeLead.address.country);
-                $("#LeadAddress").val(activeLead.address.line1 + "," + activeLead.address.city + "," + activeLead.address.state + "," + activeLead.address.postal_code);
+                $("#LeadAddress").val(activeLead.address.rawAddress);
                 $("#LeadInvoice").val(activeLead.invoice);
                 $("#LeadPrice").val(activeLead.price);
                 $("#LeadNumber").val(activeLead.phonenumber);
