@@ -1158,7 +1158,7 @@ $(document).ready(() => {
 
     $("#RefreshBoundary").click(updateBoundary);
 
-    $("#SaveLeadDetailsButton").click(updateLead);
+    $("#SaveLeadDetailsButton").click(()=> {updateLead()});
 
     $("#ProgressButton").click(() => {
         toggleProgress()
