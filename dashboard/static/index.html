@@ -344,57 +344,7 @@
                 <input type="hidden" id="addressPostalcode" name="addressPostalcode" value=""/>
                 <input type="hidden" id="street_address" name="street_address" value=""/>
             </div>
-            <script>
-                function init() {
-                   var input = document.getElementById('LeadAddress');
-                   var addressCity = document.getElementById('addressCity');
-                   
-                    const options = {
-                        types: ["address"],
-                        };
-                    var autocomplete = new google.maps.places.Autocomplete(input, options);
-                    google.maps.event.addListener(autocomplete, 'place_changed', function() 
-                    {
-                        var place = autocomplete.getPlace();
-                        for (const component of place.address_components) {
-                            const componentType = component.types[0];
-
-                            switch (componentType) {
-
-                                case "postal_code": {
-                                    document.getElementById('addressPostalcode').value = `${component.long_name}`;
-                                    break;
-                                }
-
-                                case "postal_code_suffix": {
-                                    document.getElementById('addressPostalcode').value = `${document.getElementById('addressPostalcode').value}-${component.long_name}`;
-                                    break;
-                                }
-                                
-                                case "administrative_area_level_1": {
-                                    document.getElementById('addressState').value = component.short_name;
-                                    break;
-                                }
-                                case "administrative_area_level_2": {
-                                    document.getElementById('addressCity').value = component.short_name;
-                                    break;
-                                } 
-                                case "street_address": {
-                                    document.getElementById('street_address').value = component.short_name;
-                                    break;
-                                }
-                                case "country": {
-                                    document.querySelector("#ShippingCountry").value = component.long_name;
-                                    break;
-                                }
-                            }
-                        }
-                    })
-                
-
-                }
-             google.maps.event.addDomListener(window, 'load', init);
-             </script>
+    
             <div class="Option">
                 <div id="PhoneNumber">
                         <label class="hiddenLabel" for="LeadNumber"></label>
@@ -473,5 +423,53 @@
     </div>
 </div>
 <script src="scripts/main.js" type="application/javascript"></script>
+<script>
+function init() {
+    var input = $('#LeadAddress')[0];
+    const options = {
+        types: ["address"],
+        };
+    var autocomplete = new google.maps.places.Autocomplete(input, options);
+    google.maps.event.addListener(autocomplete, 'place_changed', function() 
+    {
+        var place = autocomplete.getPlace();
+        for (const component of place.address_components) {
+            const componentType = component.types[0];
+
+            switch (componentType) {
+
+                case "postal_code": {
+                    $('#addressPostalcode')[0].value = `${component.long_name}`;
+                    break;
+                }
+
+                case "postal_code_suffix": {
+                    $('#addressPostalcode')[0].value = `${$('#addressPostalcode')[0].value}-${component.long_name}`;
+                    break;
+                }
+                
+                case "administrative_area_level_1": {
+                    $('addressState')[0].value = component.short_name;
+                    break;
+                }
+                case "administrative_area_level_2": {
+                    $('#addressCity')[0].value = component.short_name;
+                    break;
+                } 
+                case "street_address": {
+                    $('street_address')[0].value = component.short_name;
+                    break;
+                }
+                case "country": {
+                    $("#ShippingCountry")[0].value = component.long_name;
+                    break;
+                }
+            }
+        }
+    })
+}
+google.maps.event.addDomListener(window, 'load', init);
+</script>
+
 </body>
 </html>
