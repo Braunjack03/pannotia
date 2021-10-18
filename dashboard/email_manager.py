@@ -97,6 +97,7 @@ def get_lead_data(lead_id, leads_table, lead_db):
     if map_description.find('Size') < 0:
         map_description = f"Map Size: {size_dict[unit][int(map_size)]}{unit} + FREE Wooden Gift Box"
     map_price = lead["status"].get('price', 9999)
+    map_phonenumber = lead["status"].get('phonenumber', 0)
     map_production = lead["status"].get('production', False)
     if not map_production:
         map_production = "Australia"
@@ -113,7 +114,8 @@ def get_lead_data(lead_id, leads_table, lead_db):
             "email": lead_email, "center": map_center, "zoom": map_zoom, "mark": map_mark, "address": map_address,
             "size": map_size, "units": map_units, "production": map_production, "price": map_price,
             "description": map_description, "currency": lead_currency, "invoice": map_invoice,
-            "emails": lead_entry["emails"][0], "render": render, "total": lead_entry["total"]}
+            "emails": lead_entry["emails"][0], "render": render, "total": lead_entry["total"],
+            "phonenumber":map_phonenumber}
     return lead
 
 

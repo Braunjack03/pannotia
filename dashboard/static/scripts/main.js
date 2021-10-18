@@ -174,6 +174,7 @@ function updateLead(action) {
     let size = $("#SizeRadioButton")[0].children[0].checked;
     let country = $("#ShippingCountryRadio")[0].children[0].checked;
     let address = $("#ShippingAddressRadio")[0].children[0].checked;
+    let phonenumber =  $("#PhoneNumberRadio")[0].children[0].checked;
     let render = $("#RenderRadioButton")[0].children[0].checked;
     let invoice = $("#InvoiceRadioButton")[0].children[0].checked;
     let price = $("#PriceRadioButton")[0].children[0].checked;
@@ -204,16 +205,23 @@ function updateLead(action) {
     }
     if (size) updates.size = $("#LeadSize").val();
     if (address) {
-        let address = $("#LeadAddress").val().split(',');
+        let rawAddress = $("#LeadAddress").val()
+        let addressPostalcode = $("#addressPostalcode").val()
+        let addressState = $("#addressState").val()
+        let addressCity = $("#addressCity").val()
+        let street_address = $("#street_address").val()
+        
         updates.address = {};
-        updates.address.line1 = address[0];
-        updates.address.city = address[1];
-        updates.address.state = address[2];
-        updates.address.postal_code = address[3];
+        updates.address.rawAddress = rawAddress
+        updates.address.line1 = street_address;
+        updates.address.city = addressCity;
+        updates.address.state = addressState;
+        updates.address.postal_code = addressPostalcode;
         if (country) updates.address.country = $("#LeadCountry").val();
     }
     if (invoice) updates.invoice = $("#LeadInvoice").val();
     if (price) updates.price = $("#LeadPrice").val();
+    if (phonenumber) updates.phonenumber = $("#LeadNumber").val();
     if (currency) updates.currency = $("#LeadCurrency").val().toLowerCase();
     if (description) updates.description = $("#LeadDescription").val();
     if (production) updates.production = $("#LeadProduction").val();
@@ -372,6 +380,7 @@ function clearLead(leadEmail) {
     $("#ShippingAddress").val('');
     $("#Invoice").val('');
     $("#Price").val('');
+    $("#PhoneNumber").val('');
     $("#Currency").val('');
     $("#Description").val('');
     $("#ProductionCountry").val('');
@@ -466,9 +475,11 @@ function getLead(leadId) {
                 }
                 $("#LeadSize").val(activeLead.size);
                 $("#LeadCountry").val(activeLead.address.country);
-                $("#LeadAddress").val(activeLead.address.line1 + "," + activeLead.address.city + "," + activeLead.address.state + "," + activeLead.address.postal_code);
+                $("#LeadAddress").val(activeLead.address.rawAddress);
                 $("#LeadInvoice").val(activeLead.invoice);
                 $("#LeadPrice").val(activeLead.price);
+                $("#LeadNumber").val(activeLead.phonenumber);
+                console.log(activeLead.phonenumber)
                 $("#LeadCurrency").val(activeLead.currency.toUpperCase());
                 $("#LeadDescription").val(activeLead.description);
                 $("#LeadProduction").val(activeLead.production);
@@ -1147,7 +1158,7 @@ $(document).ready(() => {
 
     $("#RefreshBoundary").click(updateBoundary);
 
-    $("#SaveLeadDetailsButton").click(updateLead);
+    $("#SaveLeadDetailsButton").click(()=> {updateLead()});
 
     $("#ProgressButton").click(() => {
         toggleProgress()
