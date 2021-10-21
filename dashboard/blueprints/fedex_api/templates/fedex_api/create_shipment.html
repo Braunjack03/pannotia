@@ -1,11 +1,42 @@
-{% from "fedex_api/_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.shipper_personName) }}
-    {{ render_field(form.shipper_phoneNumber) }}
-    {{ render_field(form.shipper_companyName) }}
-    {{ render_field(form.blockInsightVisibility) }}
-    {# {{ render_field(form.accept_tos) }} #}
-  </dl>
-  <p><input type=submit value=Create>
-</form>
+{% extends "fedex_api/base.html" %}
+
+{% block title %}Create Shipment{% endblock %}
+
+{% block content %}
+
+  <style>
+    .mt-4 {
+      margin-top: 0.5rem !important;
+    }
+  </style>
+
+  <h1>Create Shipment</h1>
+
+  {% from "fedex_api/_formhelpers.html" import render_field %}
+  <form method=post>
+    <dl>
+      {{ render_field(form.recipients_personName) }}
+      {{ render_field(form.recipients_phoneNumber) }}
+      {{ render_field(form.recipients_companyName) }}
+
+      {{ render_field(form.recipients_address_line_1) }}
+      {{ render_field(form.recipients_address_line_2) }}
+      {{ render_field(form.recipients_city) }}
+      {{ render_field(form.recipients_stateOrProvinceCode) }}
+      {{ render_field(form.recipients_postalCode) }}
+      {{ render_field(form.recipients_countryCode) }}
+      {{ render_field(form.recipients_emailAddress) }}
+      
+      {# package details #}
+      {{ render_field(form.commodities_description) }}
+      {{ render_field(form.commodities_quantity) }}
+      {{ render_field(form.commodities_unit_price_amount) }}
+      {{ render_field(form.commodities_unit_currency) }}
+      {{ render_field(form.commodities_unit_weight) }}
+      {{ render_field(form.commodities_weight_units) }}
+
+      {# {{ render_field(form.blockInsightVisibility) }} #}
+    </dl>
+    <p><input class="btn btn-primary" type=submit value=Create>
+  </form>
+{% endblock content %}

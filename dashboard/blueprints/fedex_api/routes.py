@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 from datetime import datetime
 from flask import (Blueprint, render_template, request,
@@ -8,6 +9,9 @@ from dashboard import f_oauth
 from dashboard.blueprints.fedex_api.payloads import (One_Rate_Shipment, Minimal_Sample_Domestic)
 from dashboard.blueprints.fedex_api.utils import shipment_sample, validate_shipment_sample
 from dashboard.blueprints.fedex_api.forms import CreateShipmentForm
+from dashboard.main import get_lead
+from dashboard.blueprints.fedex_api.api_codes.map import get_country_code
+
 
 # TODO move to config
 api_key = 'l7c2dd7f9a218543f0af1ea46c462e84cf'
@@ -104,12 +108,36 @@ def validate_shipment():
     return {'response': 'validate'}
 
 
-@fedex.route('/shipment/create', methods=['GET', 'POST'])
-def create_shipment():
+@fedex.route('/shipment/create/', methods=['GET', 'POST'])
+@fedex.route('/shipment/create/<string:lead_id>', methods=['GET', 'POST'])
+def create_shipment(lead_id='188602483043329'):
     form = CreateShipmentForm(request.form)
+
     if request.method == 'POST' and form.validate():
         form_data = form
-        flash('Shipment created')
+        flash('Shipment created(NOTE: form valid but not sent)', 'success')
+
+    elif request.method == "GET":        
+        lead  = get_lead(lead_id)
+        lead_data = json.loads(lead.data)
+        form.recipients_personName.data = lead_data.get('name')
+        form.recipients_phoneNumber.data = lead_data.get('phonenumber')
+        form.recipients_address_line_1.data = lead_data.get('address').get('rawAddress')
+        form.recipients_city.data = lead_data.get('address').get('city')
+        form.recipients_stateOrProvinceCode.data = lead_data.get('address').get('rawAddress')
+        form.recipients_postalCode.data = lead_data.get('address').get('postal_code')
+        country = lead_data.get('address').get('country')
+        form.recipients_countryCode.data = get_country_code(country)
+        form.recipients_emailAddress.data = lead_data.get('email')
+        # package details
+        form.commodities_description.data = lead_data.get('description')
+        form.commodities_quantity.data = lead_data.get('total')
+        form.commodities_unit_price_amount.data = lead_data.get('price')
+        form.commodities_unit_currency.data = lead_data.get('currency').upper()
+        # form.commodities_unit_weight.data = lead_data.get()
+        # form.commodities_weight_units.data = lead_data.get('units')
+
+
     return render_template('fedex_api/create_shipment.html', form=form)
 
 

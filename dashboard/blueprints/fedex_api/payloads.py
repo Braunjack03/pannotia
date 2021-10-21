@@ -1,5 +1,127 @@
-# content type
-# application/json
+""" Contains default FedEx API payloads for Shipment endpoints
+    https://developer.fedex.com/api/en-us/catalog/ship/v1/docs.html#operation/Create%20Shipment
+
+"""
+
+
+International_SingleShot_Multi_Piece_Shipment = """
+{
+  "labelResponseOptions": "URL_ONLY",
+  "requestedShipment": {
+    "shipper": {
+      "contact": {
+        "personName": "SHIPPER NAME",
+        "phoneNumber": 1234567890,
+        "companyName": "Shipper Company Name"
+      },
+      "address": {
+        "streetLines": [
+          "SHIPPER STREET LINE 1"
+        ],
+        "city": "Memphis",
+        "stateOrProvinceCode": "TN",
+        "postalCode": 38116,
+        "countryCode": "US"
+      }
+    },
+    "recipients": [
+      {
+        "contact": {
+          "personName": "RECIPIENT NAME",
+          "phoneNumber": 1234567890,
+          "companyName": "Recipient Company Name"
+        },
+        "address": {
+          "streetLines": [
+            "RECIPIENT STREET LINE 1",
+            "RECIPIENT STREET LINE 2",
+            "RECIPIENT STREET LINE 3"
+          ],
+          "city": "RICHMOND",
+          "stateOrProvinceCode": "BC",
+          "postalCode": "V7C4V7",
+          "countryCode": "CA"
+        }
+      }
+    ],
+    "shipDatestamp": "2020-07-03",
+    "serviceType": "INTERNATIONAL_PRIORITY",
+    "packagingType": "YOUR_PACKAGING",
+    "pickupType": "USE_SCHEDULED_PICKUP",
+    "blockInsightVisibility": false,
+    "shippingChargesPayment": {
+      "paymentType": "SENDER"
+    },
+    "labelSpecification": {
+      "imageType": "PDF",
+      "labelStockType": "PAPER_85X11_TOP_HALF_LABEL"
+    },
+    "customsClearanceDetail": {
+      "dutiesPayment": {
+        "paymentType": "SENDER"
+      },
+      "isDocumentOnly": false,
+      "commodities": [
+        {
+          "description": "Commodity description",
+          "countryOfManufacture": "US",
+          "quantity": 3,
+          "quantityUnits": "PCS",
+          "unitPrice": {
+            "amount": 100,
+            "currency": "USD"
+          },
+          "customsValue": {
+            "amount": 300,
+            "currency": "USD"
+          },
+          "weight": {
+            "units": "LB",
+            "value": 20
+          }
+        }
+      ]
+    },
+    "shippingDocumentSpecification": {
+      "shippingDocumentTypes": [
+        "COMMERCIAL_INVOICE"
+      ],
+      "commercialInvoiceDetail": {
+        "documentFormat": {
+          "docType": "PDF",
+          "stockType": "PAPER_LETTER"
+        }
+      }
+    },
+    "requestedPackageLineItems": [
+      {
+        "groupPackageCount": 1,
+        "weight": {
+          "value": 10,
+          "units": "LB"
+        },
+        "declaredValue": {
+          "amount": 100,
+          "currency": "USD"
+        }
+      },
+      {
+        "groupPackageCount": 2,
+        "weight": {
+          "value": 5,
+          "units": "LB"
+        },
+        "declaredValue": {
+          "amount": 100,
+          "currency": "USD"
+        }
+      }
+    ]
+  },
+  "accountNumber": {
+    "value": "XXX561073"
+  }
+}"""
 
 One_Rate_Shipment = """{
   "labelResponseOptions": "URL_ONLY",
