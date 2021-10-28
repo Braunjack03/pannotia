@@ -254,11 +254,31 @@ def get_country_code(country_name):
     Returns:
         string: Country code like `US`, `UK`, `AU`
     """
-    for key in country_codes.keys():
-        if country_name in key:
-            country_code = country_codes.get(key)
-            return country_code
+    if country_name:
+        for key in country_codes.keys():
+            if country_name in key:
+                country_code = country_codes.get(key)
+                return country_code
     return None
+
+def get_state_or_province_code(country_name):
+    """Get Country code from FedEx API reference table
+        Note: not all countries has a state or province code
+
+    Args:
+        country_name (string): Full Country name
+
+    Returns:
+        string: Country code like `TN` for US->Memphis
+    """
+    # TODO update
+    if country_name:
+        for key in country_codes.keys():
+            if country_name in key:
+                country_code = country_codes.get(key)
+                return country_code
+    return None
+
 
 if __name__=='__main__':
     # country_code = get_country_code('Australia')

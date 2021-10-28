@@ -36,7 +36,7 @@ class CreateShipmentForm(Form):
     )
     recipients_stateOrProvinceCode = StringField(
         'State Or ProvinceCode',
-        [validators.Length(min=4, max=50), validators.DataRequired()],
+        [validators.Length(min=0, max=50), validators.DataRequired()],
         default='auto-replace'
     )
     recipients_postalCode = StringField(

@@ -1,25 +1,24 @@
 import json
-from functools import wraps
 from datetime import datetime
-from flask import (Blueprint, render_template, request,
-                   Response,  redirect, session, flash, url_for)
-from flask_login import current_user
+from functools import wraps
+
 from dashboard import f_oauth
-
-from dashboard.blueprints.fedex_api.payloads import (One_Rate_Shipment, Minimal_Sample_Domestic)
-from dashboard.blueprints.fedex_api.utils import shipment_sample, validate_shipment_sample
+from dashboard.config_fedex import ApiConf
+from dashboard.blueprints.fedex_api.settings import Endpoints
+from dashboard.blueprints.fedex_api.api_codes.map import (
+    get_country_code, get_state_or_province_code)
 from dashboard.blueprints.fedex_api.forms import CreateShipmentForm
+from dashboard.blueprints.fedex_api.payloads import (create_shipment_json,
+                                                     validate_shipment_json)
+from dashboard.blueprints.fedex_api.utils import (save_response, send_request,
+                                                  shipment_sample,
+                                                  validate_shipment_sample)
 from dashboard.main import get_lead
-from dashboard.blueprints.fedex_api.api_codes.map import get_country_code
+from flask import (Blueprint, Response, current_app, flash, redirect,
+                   render_template, request, session, url_for)
+from flask_login import current_user
 
 
-# TODO move to config
-api_key = 'l7c2dd7f9a218543f0af1ea46c462e84cf'
-secret_key = 'c39837dece64405cb2309d8eb6a8f8ca'
-grant_type="client_credentials"
-token_endpoint = 'https://apis-sandbox.fedex.com/oauth/token'
-token_endpoint_auth_method='client_secret_post'
-# === END config
 
 fedex = Blueprint('fedex', __name__, template_folder='templates',
                   static_url_path='', static_folder='static')
@@ -27,25 +26,25 @@ fedex = Blueprint('fedex', __name__, template_folder='templates',
 
 # api_client = oauth.create_client('fedex')
 api_client = f_oauth.register(
-            'fedex',
-            client_id=api_key,
-            client_secret=secret_key,
-            grant_type=grant_type,
-            token_endpoint=token_endpoint,
-            token_endpoint_auth_method=token_endpoint_auth_method
-        )
+    'fedex',
+    client_id=ApiConf.api_key,
+    client_secret=ApiConf.secret_key,
+    grant_type=ApiConf.grant_type,
+    token_endpoint_auth_method=ApiConf.token_endpoint_auth_method,
+    token_endpoint=Endpoints().urls.get('token_endpoint')
+)
 
 
-def obtain_fedex_oauth2_token(): 
+def obtain_fedex_oauth2_token():
     fedex_token = session.get('fedex_token')
     expires_at = session.get('fedex_token_expires_at')
 
     if not expires_at or not fedex_token:
         return None
-    need_to_refresh =  datetime.now() > datetime.fromtimestamp(int(expires_at))
-    # need_to_refresh =  True  # for testing only    
+    need_to_refresh = datetime.now() > datetime.fromtimestamp(int(expires_at))
+    # need_to_refresh =  True  # for testing only
     if need_to_refresh:
-        return None 
+        return None
 
     return fedex_token
 
@@ -56,8 +55,9 @@ def fetch_and_save_token():
         session["fedex_token"] = resp.get('access_token')
         session["fedex_token_expires_at"] = resp.get('expires_at')
         return resp
-    return {'err': 'fetch token error'}    
-    
+    return {'err': 'fetch token error'}
+
+
 def fedex_token_required(function):
     @wraps(function)
     def decorator(*args, **kwargs):
@@ -79,7 +79,7 @@ def index():
 def login():
     resp = fetch_and_save_token()
     if resp:
-        return resp    
+        return resp
     return {'err': 'fetch token error'}
 
 
@@ -88,10 +88,13 @@ def login():
 def create_shipment_demo():
     token = session.get('fedex_token')
 
-    input_data = One_Rate_Shipment
+    input_data = create_shipment_json.get('One_Rate_Shipment')
     response = shipment_sample(input_data, token)
-    print(response)
-    return {'response': 'create'}
+    # print(response)
+    if response.status_code == 200:
+        res = json.loads(response.content)
+        return {'response': res}
+    return {'error': response}
 
 
 @fedex.route('/validate', methods=["GET"])
@@ -100,33 +103,50 @@ def validate_shipment():
     import json
     token = session.get('fedex_token')
 
-    inp_d = json.loads(Minimal_Sample_Domestic)
+    input_json = validate_shipment_json.get('Minimal_Sample_Domestic')
+    inp_d = json.loads(input_json)
     inp_j = json.dumps(inp_d)
-    input_data = Minimal_Sample_Domestic
-    response = validate_shipment_sample(input_data, token)
+    # input_data = Minimal_Sample_Domestic
+    response = validate_shipment_sample(inp_j, token)
     print(response)
     return {'response': 'validate'}
 
 
 @fedex.route('/shipment/create/', methods=['GET', 'POST'])
 @fedex.route('/shipment/create/<string:lead_id>', methods=['GET', 'POST'])
+@fedex_token_required
 def create_shipment(lead_id='188602483043329'):
     form = CreateShipmentForm(request.form)
 
     if request.method == 'POST' and form.validate():
+        token = session.get('fedex_token')
         form_data = form
-        flash('Shipment created(NOTE: form valid but not sent)', 'success')
+        resp = send_request(form_data, token, request_type='create_shipment')
 
-    elif request.method == "GET":        
-        lead  = get_lead(lead_id)
+        if resp.status_code == 200:
+            current_app.logger.info(f'Shipment created {resp.status_code}')
+            save_response(resp)
+            flash('Shipment created', 'success')
+        elif resp.status_code >= 400:
+            # TODO record in log or in DB
+            current_app.logger.info(f'ERROR: resp code {resp.text}')
+            flash(
+                f'ERROR: resp code -> {resp.status_code} , details: {resp.text}', 'danger')
+            # flash(f'ERROR: resp details -> <a href="{url_for("fedex.shipment_error")}">{resp.status_code}</a> , details:{url_for("fedex.shipment_error")}', 'danger')
+
+    elif request.method == "GET":
+        lead = get_lead(lead_id)
         lead_data = json.loads(lead.data)
         form.recipients_personName.data = lead_data.get('name')
         form.recipients_phoneNumber.data = lead_data.get('phonenumber')
-        form.recipients_address_line_1.data = lead_data.get('address').get('rawAddress')
+        form.recipients_address_line_1.data = lead_data.get(
+            'address').get('rawAddress')
         form.recipients_city.data = lead_data.get('address').get('city')
-        form.recipients_stateOrProvinceCode.data = lead_data.get('address').get('rawAddress')
-        form.recipients_postalCode.data = lead_data.get('address').get('postal_code')
+        form.recipients_postalCode.data = lead_data.get(
+            'address').get('postal_code')
         country = lead_data.get('address').get('country')
+        form.recipients_stateOrProvinceCode.data = get_state_or_province_code(
+            country)
         form.recipients_countryCode.data = get_country_code(country)
         form.recipients_emailAddress.data = lead_data.get('email')
         # package details
@@ -137,9 +157,9 @@ def create_shipment(lead_id='188602483043329'):
         # form.commodities_unit_weight.data = lead_data.get()
         # form.commodities_weight_units.data = lead_data.get('units')
 
-
     return render_template('fedex_api/create_shipment.html', form=form)
 
 
-
-
+@fedex.route('/shipment/error/')
+def shipment_error(err=None):
+    return {'ERROR': err}

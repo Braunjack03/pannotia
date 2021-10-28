@@ -131,4 +131,7 @@ dmypy.json
 
 # IDE
 .vscode/
-
+ 
+# log and temp files 
+created_shipment.json
+payloads_1.py

@@ -16,27 +16,65 @@
   <form method=post>
     <dl>
       {{ render_field(form.recipients_personName) }}
-      {{ render_field(form.recipients_phoneNumber) }}
+      <div class="row">
+        <div class="col-md-6">
+          {{ render_field(form.recipients_phoneNumber) }}
+        </div>
+        <div class="col-md-6">
+          {{ render_field(form.recipients_emailAddress) }}
+        </div>
+      </div>
       {{ render_field(form.recipients_companyName) }}
+
 
       {{ render_field(form.recipients_address_line_1) }}
       {{ render_field(form.recipients_address_line_2) }}
-      {{ render_field(form.recipients_city) }}
-      {{ render_field(form.recipients_stateOrProvinceCode) }}
-      {{ render_field(form.recipients_postalCode) }}
-      {{ render_field(form.recipients_countryCode) }}
-      {{ render_field(form.recipients_emailAddress) }}
+
+      <div class="row">
+        <div class="col-md-6">
+          {{ render_field(form.recipients_city) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.recipients_stateOrProvinceCode) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.recipients_postalCode) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.recipients_countryCode) }}
+        </div>
+      </div>
       
+      <hr>
       {# package details #}
       {{ render_field(form.commodities_description) }}
-      {{ render_field(form.commodities_quantity) }}
-      {{ render_field(form.commodities_unit_price_amount) }}
-      {{ render_field(form.commodities_unit_currency) }}
-      {{ render_field(form.commodities_unit_weight) }}
-      {{ render_field(form.commodities_weight_units) }}
+      <div class="row">
+        <div class="col-md-2">
+          {{ render_field(form.commodities_quantity) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.commodities_unit_price_amount) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.commodities_unit_currency) }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          {{ render_field(form.commodities_unit_weight) }}
+        </div>
+        <div class="col-md-2">
+          {{ render_field(form.commodities_weight_units) }}
+        </div>
+      </div>
+      
+      
 
       {# {{ render_field(form.blockInsightVisibility) }} #}
     </dl>
     <p><input class="btn btn-primary" type=submit value=Create>
   </form>
+
+
+
 {% endblock content %}
