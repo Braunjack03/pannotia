@@ -5,19 +5,17 @@ from functools import wraps
 from dashboard import f_oauth
 from dashboard.config_fedex import ApiConf
 from dashboard.blueprints.fedex_api.settings import Endpoints
-from dashboard.blueprints.fedex_api.api_codes.map import (
-    get_country_code, get_state_or_province_code)
+
 from dashboard.blueprints.fedex_api.forms import CreateShipmentForm
 from dashboard.blueprints.fedex_api.payloads import (create_shipment_json,
                                                      validate_shipment_json)
 from dashboard.blueprints.fedex_api.utils import (save_response, send_request,
-                                                  shipment_sample,
+                                                  shipment_sample, AddressParser,
                                                   validate_shipment_sample)
 from dashboard.main import get_lead
 from flask import (Blueprint, Response, current_app, flash, redirect,
                    render_template, request, session, url_for)
 from flask_login import current_user
-
 
 
 fedex = Blueprint('fedex', __name__, template_folder='templates',
@@ -132,23 +130,21 @@ def create_shipment(lead_id='188602483043329'):
             current_app.logger.info(f'ERROR: resp code {resp.text}')
             flash(
                 f'ERROR: resp code -> {resp.status_code} , details: {resp.text}', 'danger')
-            # flash(f'ERROR: resp details -> <a href="{url_for("fedex.shipment_error")}">{resp.status_code}</a> , details:{url_for("fedex.shipment_error")}', 'danger')
 
     elif request.method == "GET":
         lead = get_lead(lead_id)
         lead_data = json.loads(lead.data)
         form.recipients_personName.data = lead_data.get('name')
         form.recipients_phoneNumber.data = lead_data.get('phonenumber')
-        form.recipients_address_line_1.data = lead_data.get(
-            'address').get('rawAddress')
+        form.recipients_emailAddress.data = lead_data.get('email')
+        # address
+        addr_parser = AddressParser(lead_data.get('address'))
+        form.recipients_address_line_1.data = addr_parser.get_address_line_1()
+        form.recipients_stateOrProvinceCode.data = addr_parser.get_province_code()
+        form.recipients_countryCode.data = addr_parser.get_country_code()
         form.recipients_city.data = lead_data.get('address').get('city')
         form.recipients_postalCode.data = lead_data.get(
             'address').get('postal_code')
-        country = lead_data.get('address').get('country')
-        form.recipients_stateOrProvinceCode.data = get_state_or_province_code(
-            country)
-        form.recipients_countryCode.data = get_country_code(country)
-        form.recipients_emailAddress.data = lead_data.get('email')
         # package details
         form.commodities_description.data = lead_data.get('description')
         form.commodities_quantity.data = lead_data.get('total')
@@ -158,8 +154,3 @@ def create_shipment(lead_id='188602483043329'):
         # form.commodities_weight_units.data = lead_data.get('units')
 
     return render_template('fedex_api/create_shipment.html', form=form)
-
-
-@fedex.route('/shipment/error/')
-def shipment_error(err=None):
-    return {'ERROR': err}

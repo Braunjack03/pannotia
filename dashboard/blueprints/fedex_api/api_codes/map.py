@@ -1,4 +1,7 @@
-# FEDEX API Reference
+""" FEDEX API Reference
+    https://developer.fedex.com/api/en-us/guides/api-reference.html
+""" 
+from dashboard.blueprints.fedex_api.api_codes.provinces_and_states import st_pr_codes
 
 
 country_codes = {
@@ -256,31 +259,59 @@ def get_country_code(country_name):
     """
     if country_name:
         for key in country_codes.keys():
-            if country_name in key:
+            if country_name.upper() in key.upper():
                 country_code = country_codes.get(key)
                 return country_code
     return None
 
-def get_state_or_province_code(country_name):
-    """Get Country code from FedEx API reference table
+
+def get_state_or_province_code(country_name, province):
+    """Get Province or State code from FedEx API reference table
         Note: not all countries has a state or province code
+
+    Args:
+        country_name (string): Full Country name
+        province (string): Province name
+
+    Returns:
+        string: Province code like `AL` for US->Alabama
+    """
+    country_code = get_country_code(country_name)
+    if country_code:
+        for k in st_pr_codes.keys():
+            if country_code in k:
+                codes = st_pr_codes.get(k)
+                for province_k in codes:
+                    if province.upper() in province_k.upper():
+                        code = codes.get(province_k)
+                        return code
+    return None
+
+
+def has_code(country_name):
+    """ Check if Country has codes in FedEx API reference table
 
     Args:
         country_name (string): Full Country name
 
     Returns:
-        string: Country code like `TN` for US->Memphis
+        bool: True if Country has codes
     """
-    # TODO update
-    if country_name:
-        for key in country_codes.keys():
-            if country_name in key:
-                country_code = country_codes.get(key)
-                return country_code
-    return None
+    country_code = get_country_code(country_name)
+    if country_code:
+        for k in st_pr_codes.keys():
+            if country_code in k:
+                return True
+    return False
 
 
 if __name__=='__main__':
-    # country_code = get_country_code('Australia')
+    # testing
+    # python -m dashboard.blueprints.fedex_api.api_codes.mas
+
+    # country_code = get_country_code('australia')
+    # country_code = get_country_code('united States')
     # print(country_code)
+    code = get_state_or_province_code('united states', 'alabama')
+    print(code)
     pass

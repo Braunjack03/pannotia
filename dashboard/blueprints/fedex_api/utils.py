@@ -5,6 +5,7 @@ import requests
 from dashboard.config_fedex import company_info
 from dashboard.blueprints.fedex_api.payloads import (create_shipment_json, validate_shipment_json)
 from dashboard.blueprints.fedex_api.settings import Endpoints
+from dashboard.blueprints.fedex_api.api_codes import map
 
 
 def shipment_sample(input_data, token):
@@ -159,3 +160,96 @@ def save_response(d):
         f.seek(0)
         # json.dump(data, file)    
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+class AddressParser:
+    """ Address Parser
+        example of user data with address see: http://localhost:5000/lead/188602483043329
+        where 188602483043329 -> user id
+
+        parse address from string: 
+        expected string:
+        <street>,<province_or_state>,<country>
+
+    """
+
+    def __init__(self, address) -> None:
+        self.raw_address = address.get('rawAddress')
+        self.address_line_1 = address.get('line1')
+        self.city = address.get('city')
+        self.state = address.get('state')
+        self.postal_code = address.get('postal_code')
+        self.country = address.get('country')
+
+
+    def get_address_line_1(self):
+        if self.address_line_1 == "":
+            if self.raw_address != "":
+                self.address_line_1 = self.raw_address.split(',')[0]
+        return self.address_line_1
+
+    
+    def get_country_code(self):
+        if self.country == "":
+            return None
+        self.country_code = map.get_country_code(self.country)
+        return self.country_code
+
+
+    def _get_province_name(self):        
+        if self.state == "":
+            parsed_raw_addr = self.raw_address.split(',')
+            for i, item in enumerate(parsed_raw_addr):
+                if i == 1 and map.has_code(self.country):
+                    # get first word 
+                    province_name = item.strip().split(' ')[0]
+                    return province_name               
+        return None
+
+
+    def get_province_code(self):
+        if self.state != "":
+            return self.state
+        province_name = self._get_province_name()
+        if province_name:
+            code = map.get_state_or_province_code(self.country, province_name)
+            return code
+
+
+
+if __name__=='__main__':
+    # testing
+    # python -m dashboard.blueprints.fedex_api.utils
+
+    print('=== testing utils ===')
+    address =  {
+        "rawAddress": "8 Danina Street, Mansfield QLD, Australia",
+        "line1": "",
+        "city": "Brisbane",
+        "state": "",
+        "postal_code": "",
+        "country": "Australia"
+    }
+    # address =  {
+    #     "rawAddress": "8 Danina Street, alabama QLD, United States",
+    #     "line1": "",
+    #     "city": "Brisbane",
+    #     "state": "",
+    #     "postal_code": "",
+    #     "country": "United States"
+    # }
+    print('-- init parser --')
+    parser = AddressParser(address)
+    print('raw_address:', parser.raw_address)
+    print('address_line_1:', parser.address_line_1)
+    print('city:', parser.city)
+    print('state:', parser.state)
+    print('postal_code:', parser.postal_code)
+    print('country:', parser.country)
+    print('-- End init parser --')
+    print()
+    print(parser.get_address_line_1())
+    print(parser.get_country_code())
+    print(parser.get_province_code())
+
+    pass    
