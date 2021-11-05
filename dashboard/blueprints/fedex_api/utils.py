@@ -74,7 +74,8 @@ def _replace_data(form_data, request_type):
         request_type (string): Request type - endpoints name/type
     """
     if  request_type=='create_shipment':
-        payload = create_shipment_json.get('International_Shipment')
+        # payload = create_shipment_json.get('International_Shipment')
+        payload = create_shipment_json.get('Custom_Shipment')
 
         # p_d = json.loads(payload)
         p_d = _set_comany_info_from_config(json.loads(payload))
@@ -86,8 +87,12 @@ def _replace_data(form_data, request_type):
         p_d['requestedShipment']['recipients'][0]['address']['stateOrProvinceCode'] = form_data.recipients_stateOrProvinceCode.data
         p_d['requestedShipment']['recipients'][0]['address']['postalCode'] = form_data.recipients_postalCode.data
         p_d['requestedShipment']['recipients'][0]['address']['countryCode'] = form_data.recipients_countryCode.data
+        
+        # Shipment details
         # p_d['requestedShipment']['recipients']['personName'] = form_data.recipients_emailAddress.data
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['description'] = form_data.commodities_description.data
+        p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['harmonizedCode'] = form_data.commodities_harmonizedCode.data
+        p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['countryOfManufacture'] = form_data.commodities_countryOfManufacture.data
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['quantity'] = form_data.commodities_quantity.data
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['unitPrice']['amount'] = form_data.commodities_unit_price_amount.data
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['unitPrice']['currency'] = form_data.commodities_unit_currency.data
@@ -96,14 +101,27 @@ def _replace_data(form_data, request_type):
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['weight']['value'] = form_data.commodities_unit_weight.data
         p_d['requestedShipment']['customsClearanceDetail']['commodities'][0]['weight']['units'] = form_data.commodities_weight_units.data
 
+        p_d['requestedShipment']['serviceType'] = form_data.r_shipment_service_type.data
+        p_d['requestedShipment']['packagingType'] = form_data.r_shipment_packaging_type.data
+        p_d['requestedShipment']['pickupType'] = form_data.r_shipment_pickup_type.data
+        p_d['requestedShipment']['customsClearanceDetail']['commercialInvoice']['shipmentPurpose'] = form_data.r_shipment_purpose.data
+
         p_d['requestedShipment']['requestedPackageLineItems'][0]['weight']['value'] = form_data.commodities_unit_weight.data
         p_d['requestedShipment']['requestedPackageLineItems'][0]['weight']['units'] = form_data.commodities_weight_units.data
 
+        # billing
+        p_d['requestedShipment']['shippingChargesPayment']['paymentType'] = form_data.r_shipment_shippingChargesPayment.data
+        p_d['requestedShipment']['customsClearanceDetail']['dutiesPayment']['paymentType'] = form_data.r_shipment_dutiesPayment.data
+        p_d['requestedShipment']['recipients'][0]['tins'][0]['number'] = form_data.r_shipment_recipient_tins.data
+        p_d['requestedShipment']['shipper']['tins'][0]['number'] = form_data.r_shipment_shipper_tins.data
+        
+        
+        # TODO test form_data.r_shipment_service_type.data and delete below
         # if shipper and recipient have the same country code -> FEDEX_EXPRESS_SAVER
-        shipper_country = p_d['requestedShipment']['shipper']['address']['countryCode']
-        recipient = form_data.recipients_countryCode.data
-        if shipper_country == recipient:
-            p_d['requestedShipment']['serviceType'] = 'STANDARD_OVERNIGHT'
+        # shipper_country = p_d['requestedShipment']['shipper']['address']['countryCode']
+        # recipient = form_data.recipients_countryCode.data
+        # if shipper_country == recipient:
+        #     p_d['requestedShipment']['serviceType'] = 'STANDARD_OVERNIGHT'
 
         payload_json = json.dumps(p_d)
         return payload_json

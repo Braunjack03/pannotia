@@ -9,6 +9,12 @@
       {% endfor %}
     </div> 
 
+  {% elif field.type == 'SelectField' %}
+    <div class="form-group">
+      <label class="col-form-label mt-4" for="inputDefault">{{ field.label }}</label>
+      {{ field(class_="form-select form-control form-control-sm",**kwargs)|safe }}
+    </div>
+
   {% else %}
     <div class="form-group">
       <label class="col-form-label mt-4" for="inputDefault">{{ field.label }}</label>

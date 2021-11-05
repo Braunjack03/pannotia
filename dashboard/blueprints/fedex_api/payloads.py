@@ -6,6 +6,129 @@
 
 create_shipment_json = {
 
+  'Custom_Shipment': """{
+    "labelResponseOptions": "URL_ONLY",
+    "requestedShipment": {
+      "shipper": {
+        "contact": {
+          "personName": "SHIPPER NAME",
+          "phoneNumber": 1234567890,
+          "companyName": "Shipper Company Name"
+        },
+        "address": {
+          "streetLines": [
+            "SHIPPER STREET LINE 1"
+          ],
+          "city": "Memphis",
+          "stateOrProvinceCode": "TN",
+          "postalCode": 38116,
+          "countryCode": "US"
+        },
+        "tins": [
+          {
+            "number": ""
+          }
+        ]
+      },
+      "recipients": [
+        {
+          "contact": {
+            "personName": "RECIPIENT NAME",
+            "phoneNumber": 1234567890,
+            "companyName": "Recipient Company Name"
+          },
+          "address": {
+            "streetLines": [
+              "RECIPIENT STREET LINE 1",
+              "RECIPIENT STREET LINE 2",
+              "RECIPIENT STREET LINE 3"
+            ],
+            "city": "RICHMOND",
+            "stateOrProvinceCode": "BC",
+            "postalCode": "V7C4V7",
+            "countryCode": "CA"
+          },
+          "tins": [
+            {
+              "number": ""
+            }
+          ]
+        }
+      ],
+      "shipDatestamp": "2020-07-03",
+      "serviceType": "INTERNATIONAL_PRIORITY",
+      "packagingType": "YOUR_PACKAGING",
+      "pickupType": "USE_SCHEDULED_PICKUP",
+      "blockInsightVisibility": false,
+      "shippingChargesPayment": {
+        "paymentType": "SENDER"
+      },
+      "labelSpecification": {
+        "imageType": "PDF",
+        "labelStockType": "PAPER_85X11_TOP_HALF_LABEL"
+      },
+      "customsClearanceDetail": {
+        "dutiesPayment": {
+          "paymentType": "SENDER"
+        },
+        "isDocumentOnly": true,
+        "commercialInvoice": {
+          "shipmentPurpose": ""
+        },
+        "commodities": [
+          {
+            "description": "Commodity description",
+            "harmonizedCode": "",
+            "countryOfManufacture": "",
+            "quantity": 1,
+            "quantityUnits": "PCS",
+            "unitPrice": {
+              "amount": 100,
+              "currency": "USD"
+            },
+            "customsValue": {
+              "amount": 100,
+              "currency": "USD"
+            },
+            "weight": {
+              "units": "LB",
+              "value": 20
+            }
+          }
+        ]
+      },
+      "shippingDocumentSpecification": {
+        "shippingDocumentTypes": [
+          "COMMERCIAL_INVOICE"
+        ],
+        "commercialInvoiceDetail": {
+          "documentFormat": {
+            "stockType": "PAPER_LETTER",
+            "docType": "PDF"
+          }
+        }
+      },
+      "requestedPackageLineItems": [
+        {
+          "weight": {
+            "units": "LB",
+            "value": 70
+          },
+          "dimensions": {
+            "length": 90,
+            "width": 90,
+            "height": 10,
+            "units": "CM"
+         }
+        }
+      ]
+    },
+    "accountNumber": {
+      "value": "XXX561073"
+    }
+  }
+  """,
+
   'International_Shipment': """{
     "labelResponseOptions": "URL_ONLY",
     "requestedShipment": {

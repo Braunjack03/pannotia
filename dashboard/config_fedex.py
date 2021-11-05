@@ -18,7 +18,7 @@ company_info ={
     'postalCode' : '4006',
     'countryCode' : 'AU',
 
-    'accountNumber': "510088000"
+    'accountNumber': "510088000"    # TODO replace
 
 }
 

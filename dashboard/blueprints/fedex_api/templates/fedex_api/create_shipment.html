@@ -13,68 +13,148 @@
   <h1>Create Shipment</h1>
 
   {% from "fedex_api/_formhelpers.html" import render_field %}
-  <form method=post>
-    <dl>
-      {{ render_field(form.recipients_personName) }}
-      <div class="row">
-        <div class="col-md-6">
-          {{ render_field(form.recipients_phoneNumber) }}
-        </div>
-        <div class="col-md-6">
-          {{ render_field(form.recipients_emailAddress) }}
-        </div>
-      </div>
-      {{ render_field(form.recipients_companyName) }}
-
-
-      {{ render_field(form.recipients_address_line_1) }}
-      {{ render_field(form.recipients_address_line_2) }}
-
-      <div class="row">
-        <div class="col-md-6">
-          {{ render_field(form.recipients_city) }}
-        </div>
-        <div class="col-md-2">
-          {{ render_field(form.recipients_stateOrProvinceCode) }}
-        </div>
-        <div class="col-md-2">
-          {{ render_field(form.recipients_postalCode) }}
-        </div>
-        <div class="col-md-2">
-          {{ render_field(form.recipients_countryCode) }}
-        </div>
-      </div>
+  <form method=post> 
       
-      <hr>
-      {# package details #}
-      {{ render_field(form.commodities_description) }}
-      <div class="row">
-        <div class="col-md-2">
-          {{ render_field(form.commodities_quantity) }}
+      <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button 
+            class="accordion-button bg-light" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#panelsStayOpen-collapseOne" 
+            aria-expanded="true" 
+            aria-controls="panelsStayOpen-collapseOne">
+              Contacts
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"  aria-labelledby="panelsStayOpen-headingOne">
+            <div class="accordion-body">
+              {{ render_field(form.recipients_personName) }}
+              <div class="row">
+                <div class="col-md-6">
+                  {{ render_field(form.recipients_phoneNumber) }}
+                </div>
+                <div class="col-md-6">
+                  {{ render_field(form.recipients_emailAddress) }}
+                </div>
+              </div>
+              {{ render_field(form.recipients_companyName) }}
+
+
+              {{ render_field(form.recipients_address_line_1) }}
+              {{ render_field(form.recipients_address_line_2) }}
+
+              <div class="row">
+                <div class="col-md-6">
+                  {{ render_field(form.recipients_city) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.recipients_stateOrProvinceCode) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.recipients_postalCode) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.recipients_countryCode) }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-2">
-          {{ render_field(form.commodities_unit_price_amount) }}
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+            <button 
+            class="accordion-button collapsed bg-light" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#panelsStayOpen-collapseTwo" 
+            aria-expanded="false" 
+            aria-controls="panelsStayOpen-collapseTwo">
+              Package Details
+            </button>
+          </h2>
+          <div 
+          id="panelsStayOpen-collapseTwo" 
+          class="accordion-collapse collapse" 
+          aria-labelledby="panelsStayOpen-headingTwo">
+            <div class="accordion-body">
+              {# package details #}
+              {{ render_field(form.commodities_description) }}
+              <div class="row">
+                <div class="col-md-6">
+                  {{ render_field(form.commodities_harmonizedCode) }}
+                </div>
+                <div class="col-md-6">
+                  {{ render_field(form.commodities_countryOfManufacture) }}
+                </div>        
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_quantity) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_unit_price_amount) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_unit_currency) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_unit_weight) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_weight_units) }}
+                </div>
+              </div>
+              
+              {{ render_field(form.r_shipment_service_type) }}
+              {{ render_field(form.r_shipment_packaging_type) }}
+              {{ render_field(form.r_shipment_pickup_type) }}
+              {{ render_field(form.r_shipment_purpose) }}
+              {# END package details #}
+            </div>
+          </div>
         </div>
-        <div class="col-md-2">
-          {{ render_field(form.commodities_unit_currency) }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2">
-          {{ render_field(form.commodities_unit_weight) }}
-        </div>
-        <div class="col-md-2">
-          {{ render_field(form.commodities_weight_units) }}
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+            <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+              Billing
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+            <div class="accordion-body">
+              <div class="row ">
+                <div class="col-md-6">
+                  {{ render_field(form.r_shipment_shippingChargesPayment) }}
+                </div>
+                <div class="col-md-6">
+                  {{ render_field(form.r_shipment_dutiesPayment) }}
+                </div>
+              </div>
+              <div class="row ">
+                <div class="col-md-6">
+                  {{ render_field(form.r_shipment_recipient_tins) }}
+                </div>
+                <div class="col-md-6">
+                  {{ render_field(form.r_shipment_shipper_tins) }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       
 
       {# {{ render_field(form.blockInsightVisibility) }} #}
-    </dl>
+    
+    <hr>
     <p><input class="btn btn-primary" type=submit value=Create>
   </form>
-
 
 
 {% endblock content %}
