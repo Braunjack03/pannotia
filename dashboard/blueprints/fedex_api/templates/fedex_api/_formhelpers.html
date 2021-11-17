@@ -1,0 +1,25 @@
+{% macro render_field(field) %}
+    
+  {% if field.errors %}    
+    <div class="form-group has-danger">
+      <label class="form-label mt-4" for="inputInvalid">{{ field.label }}</label>
+      {{ field(class_="form-control form-control-sm is-invalid",**kwargs)|safe }}
+      {% for error in field.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div> 
+
+  {% elif field.type == 'SelectField' %}
+    <div class="form-group">
+      <label class="col-form-label mt-4" for="inputDefault">{{ field.label }}</label>
+      {{ field(class_="form-select form-control form-control-sm",**kwargs)|safe }}
+    </div>
+
+  {% else %}
+    <div class="form-group">
+      <label class="col-form-label mt-4" for="inputDefault">{{ field.label }}</label>
+      {{ field(class_="form-control form-control-sm",**kwargs)|safe }}
+    </div>
+  {% endif %}   
+  
+{% endmacro %}

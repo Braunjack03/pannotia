@@ -14,7 +14,7 @@ from flask import Blueprint, render_template, request, Response, current_app, re
 from flask_login import current_user
 
 from .models import Dynamo
-from .email_manager import read_emails, send_mail, build_lead_db, get_emails, lead_list, get_lead_data
+from .email_manager import read_emails, send_mail, get_emails, lead_list, get_lead_data
 from .tms import deg_to_num, num_to_deg
 
 

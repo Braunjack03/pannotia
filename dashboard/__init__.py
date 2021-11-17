@@ -1,6 +1,10 @@
 from flask import Flask, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user
+from authlib.integrations.flask_client import OAuth as fOAuth  # new version of OAuth -compartable with FedEx
+
 import os
+
+f_oauth = fOAuth()
 
 
 def public_route(decorated_function):
@@ -29,6 +33,7 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+    f_oauth.init_app(app)
 
     from .models import User
 
@@ -65,5 +70,9 @@ def create_app():
     # blueprint for xero parts of app
     from .xero import xero_app as xero_blueprint
     app.register_blueprint(xero_blueprint, url_prefix='/xero')
+
+    # blueprint for FedEx parts of app
+    from .blueprints.fedex_api.routes import fedex as fedex_blueprint
+    app.register_blueprint(fedex_blueprint, url_prefix='/fedex')
 
     return app

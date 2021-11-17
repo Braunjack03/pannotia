@@ -174,7 +174,7 @@ function updateLead(action) {
     let size = $("#SizeRadioButton")[0].children[0].checked;
     let country = $("#ShippingCountryRadio")[0].children[0].checked;
     let address = $("#ShippingAddressRadio")[0].children[0].checked;
-    let phonenumber =  $("#PhoneNumberRadio")[0].children[0].checked;
+    let phonenumber = $("#PhoneNumberRadio")[0].children[0].checked;
     let render = $("#RenderRadioButton")[0].children[0].checked;
     let invoice = $("#InvoiceRadioButton")[0].children[0].checked;
     let price = $("#PriceRadioButton")[0].children[0].checked;
@@ -209,15 +209,17 @@ function updateLead(action) {
         let addressPostalcode = $("#addressPostalcode").val()
         let addressState = $("#addressState").val()
         let addressCity = $("#addressCity").val()
+        let addressCity2 = $("#addressCity2").val()
         let street_address = $("#street_address").val()
-        
+
         updates.address = {};
         updates.address.rawAddress = rawAddress
         updates.address.line1 = street_address;
         updates.address.city = addressCity;
+        updates.address.city2 = addressCity2;
         updates.address.state = addressState;
         updates.address.postal_code = addressPostalcode;
-        if (country) updates.address.country = $("#LeadCountry").val();
+        updates.address.country = $("#LeadCountry").val();
     }
     if (invoice) updates.invoice = $("#LeadInvoice").val();
     if (price) updates.price = $("#LeadPrice").val();
@@ -475,7 +477,7 @@ function getLead(leadId) {
                 }
                 $("#LeadSize").val(activeLead.size);
                 $("#LeadCountry").val(activeLead.address.country);
-                $("#LeadAddress").val(activeLead.address.rawAddress);
+                $("#LeadAddress").val(activeLead.address.rawAddress ? activeLead.address.rawAddress : activeLead.address.line1);
                 $("#LeadInvoice").val(activeLead.invoice);
                 $("#LeadPrice").val(activeLead.price);
                 $("#LeadNumber").val(activeLead.phonenumber);
@@ -891,6 +893,16 @@ function getPending(type) {
     selectLead();
 }
 
+function createLabel() {
+    let labelURL = hostUrl() + 'fedex/shipment/create/' + activeLead.id;
+    window.open(labelURL);
+}
+
+function getLabel() {
+    let labelURL = hostUrl() + 'fedex/shipment/get/' + activeLead.id;
+    window.open(labelURL);
+}
+
 
 function hideCancelButtons() {
     let cancelButtons = $(".LeadCancel");
@@ -1158,7 +1170,17 @@ $(document).ready(() => {
 
     $("#RefreshBoundary").click(updateBoundary);
 
-    $("#SaveLeadDetailsButton").click(()=> {updateLead()});
+    $("#SaveLeadDetailsButton").click(() => {
+        updateLead()
+    });
+
+    $("#CreateLeadShipment").click(() => {
+        createLabel()
+    });
+
+    $("#GetShippingLabel").click(() => {
+        getLabel()
+    });
 
     $("#ProgressButton").click(() => {
         toggleProgress()
@@ -1211,3 +1233,4 @@ $(document).ready(() => {
         };
     }
 })
+
