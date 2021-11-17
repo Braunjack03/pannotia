@@ -3,14 +3,12 @@
 <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"/>
     <title>Pangea Dashboard</title>
-    <link href="styles.css" rel="stylesheet" type="text/css"/>
+    <link href="css/styles.css" rel="stylesheet" type="text/css"/>
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js" type="application/javascript"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css" rel="stylesheet" type="text/css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAco-qpiSgeVVB5FoZry-YsomJgmlrtGC8"></script>
 
-    
-    
 
 </head>
 <body>
@@ -340,18 +338,20 @@
                                                                                            class="UpdateCheck"/> <span
                         class="checkmark"></span> </label>
                 <input type="hidden" id="addressCity" name="addressCity" value=""/>
+                <input type="hidden" id="addressCity2" name="addressCity2" value=""/>
                 <input type="hidden" id="addressState" name="addressState" value=""/>
                 <input type="hidden" id="addressPostalcode" name="addressPostalcode" value=""/>
                 <input type="hidden" id="street_address" name="street_address" value=""/>
             </div>
-    
+
             <div class="Option">
                 <div id="PhoneNumber">
-                        <label class="hiddenLabel" for="LeadNumber"></label>
-                        <input id="LeadNumber" style="width:160px" type="text" class="DetailText" />
+                    <label class="hiddenLabel" for="LeadNumber"></label>
+                    <input id="LeadNumber" style="width:160px" type="text" class="DetailText"/>
                 </div>
                 <label id="PhoneNumberRadio" class="container">PHONE NUMBER <input type="checkbox"
-                        class="UpdateCheck" /> <span class="checkmark"></span> </label>
+                                                                                   class="UpdateCheck"/> <span
+                        class="checkmark"></span> </label>
             </div>
             <div class="Option">
                 <div class="UnitSelect">
@@ -408,6 +408,10 @@
                     <span class="checkmark"></span> </label>
             </div>
         </div>
+        <div id="Shipping" class="ShippingButtons">
+            <div id="CreateLeadShipment" class="SendAction">Create Label</div>
+            <div id="GetShippingLabel" class="SendAction">Download Label</div>
+        </div>
         <div id="Emails" class="LeadEmails">
             <div class="Email">
                 To:buzz@pangeamaps.com <br/>
@@ -424,51 +428,56 @@
 </div>
 <script src="scripts/main.js" type="application/javascript"></script>
 <script>
-function init() {
-    var input = $('#LeadAddress')[0];
-    const options = {
-        types: ["address"],
+    function init() {
+        var input = $('#LeadAddress')[0];
+        const options = {
+            types: ["address"],
         };
-    var autocomplete = new google.maps.places.Autocomplete(input, options);
-    google.maps.event.addListener(autocomplete, 'place_changed', function() 
-    {
-        var place = autocomplete.getPlace();
-        for (const component of place.address_components) {
-            const componentType = component.types[0];
+        var autocomplete = new google.maps.places.Autocomplete(input, options);
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            for (const component of place.address_components) {
+                const componentType = component.types[0];
 
-            switch (componentType) {
+                switch (componentType) {
 
-                case "postal_code": {
-                    $('#addressPostalcode')[0].value = `${component.long_name}`;
-                    break;
-                }
+                    case "postal_code": {
+                        $('#addressPostalcode')[0].value = `${component.long_name}`;
+                        break;
+                    }
 
-                case "postal_code_suffix": {
-                    $('#addressPostalcode')[0].value = `${$('#addressPostalcode')[0].value}-${component.long_name}`;
-                    break;
-                }
-                
-                case "administrative_area_level_1": {
-                    $('addressState')[0].value = component.short_name;
-                    break;
-                }
-                case "administrative_area_level_2": {
-                    $('#addressCity')[0].value = component.short_name;
-                    break;
-                } 
-                case "street_address": {
-                    $('street_address')[0].value = component.short_name;
-                    break;
-                }
-                case "country": {
-                    $("#ShippingCountry")[0].value = component.long_name;
-                    break;
+                    case "postal_code_suffix": {
+                        $('#addressPostalcode')[0].value += `-${component.long_name}`;
+                        break;
+                    }
+
+                    case "administrative_area_level_1": {
+                        $('#addressState')[0].value = component.short_name;
+                        break;
+                    }
+
+                    case "locality": {
+                        $('#addressCity')[0].value = component.short_name;
+                        break;
+                    }
+                    case "administrative_area_level_2": {
+                        $('#addressCity2')[0].value = component.short_name;
+                        break;
+                    }
+                    case "street_address": {
+                        $('#street_address')[0].value = component.short_name;
+                        break;
+                    }
+                    case "country": {
+                        $("#LeadCountry")[0].value = component.long_name;
+                        break;
+                    }
                 }
             }
-        }
-    })
-}
-google.maps.event.addDomListener(window, 'load', init);
+        })
+    }
+
+    google.maps.event.addDomListener(window, 'load', init);
 </script>
 
 </body>

@@ -2,25 +2,19 @@ import json
 from datetime import datetime
 from functools import wraps
 
-from dashboard import f_oauth
-from dashboard.config_fedex import ApiConf
-from dashboard.blueprints.fedex_api.settings import Endpoints
+import boto3
 
-from dashboard.blueprints.fedex_api.forms import CreateShipmentForm
-from dashboard.blueprints.fedex_api.payloads import (create_shipment_json,
-                                                     validate_shipment_json)
-from dashboard.blueprints.fedex_api.utils import (save_response, send_request,
-                                                  shipment_sample, AddressParser,
-                                                  validate_shipment_sample)
+from dashboard.models import Dynamo
 from dashboard.main import get_lead
-from flask import (Blueprint, Response, current_app, flash, redirect,
-                   render_template, request, session, url_for)
-from flask_login import current_user
-
+from dashboard import f_oauth
+from dashboard.email_manager import get_lead_data
+from dashboard.config_fedex import ApiConf
+from dashboard.blueprints.fedex_api.forms import CreateShipmentForm
+from dashboard.blueprints.fedex_api.utils import (save_response, send_request, AddressParser, Endpoints)
+from flask import (Blueprint, current_app, flash, render_template, request, session, redirect, url_for)
 
 fedex = Blueprint('fedex', __name__, template_folder='templates',
-                  static_url_path='', static_folder='static')
-
+                  static_url_path='', static_folder='../../static')
 
 # api_client = oauth.create_client('fedex')
 api_client = f_oauth.register(
@@ -31,6 +25,7 @@ api_client = f_oauth.register(
     token_endpoint_auth_method=ApiConf.token_endpoint_auth_method,
     token_endpoint=Endpoints().urls.get('token_endpoint')
 )
+dynamo_resource = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 
 def obtain_fedex_oauth2_token():
@@ -65,12 +60,8 @@ def fedex_token_required(function):
             # return redirect(url_for("fedex.login", _external=True))
 
         return function(*args, **kwargs)
+
     return decorator
-
-
-@fedex.route('/')
-def index():
-    return {'response': 'Index page'}
 
 
 @fedex.route('/login')
@@ -81,33 +72,16 @@ def login():
     return {'err': 'fetch token error'}
 
 
-@fedex.route('/create', methods=["GET"])
+@fedex.route('/shipment/get/<string:lead_id>', methods=['GET'])
 @fedex_token_required
-def create_shipment_demo():
-    token = session.get('fedex_token')
-
-    input_data = create_shipment_json.get('One_Rate_Shipment')
-    response = shipment_sample(input_data, token)
-    # print(response)
-    if response.status_code == 200:
-        res = json.loads(response.content)
-        return {'response': res}
-    return {'error': response}
-
-
-@fedex.route('/validate', methods=["GET"])
-@fedex_token_required
-def validate_shipment():
-    import json
-    token = session.get('fedex_token')
-
-    input_json = validate_shipment_json.get('Minimal_Sample_Domestic')
-    inp_d = json.loads(input_json)
-    inp_j = json.dumps(inp_d)
-    # input_data = Minimal_Sample_Domestic
-    response = validate_shipment_sample(inp_j, token)
-    print(response)
-    return {'response': 'validate'}
+def get_shipment(lead_id):
+    table = dynamo_resource.Table(f"{current_app.config['USER']}Dashboard")
+    lead_db = Dynamo(f"{current_app.config['USER']}Lead", 'lead')
+    lead = get_lead_data(lead_id, table, lead_db)
+    url = lead.get('shipping')
+    if url is None:
+        url = url_for('fedex.create_shipment', lead_id=lead_id)
+    return redirect(url)
 
 
 @fedex.route('/shipment/create/', methods=['GET', 'POST'])
@@ -119,17 +93,28 @@ def create_shipment(lead_id='188602483043329'):
     if request.method == 'POST' and form.validate():
         token = session.get('fedex_token')
         form_data = form
-        resp = send_request(form_data, token, request_type='create_shipment')
+        if form.validate_address.data:
+            request_type = 'validate_address'
+            success = 'Address valid'
+        else:
+            request_type = 'create_shipment'
+            success = 'Shipment created'
 
+        resp = send_request(form_data, token, request_type=request_type)
         if resp.status_code == 200:
+            if request_type == 'validate_address':
+                success = resp.json()["output"]['resolvedAddresses'][0]
             current_app.logger.info(f'Shipment created {resp.status_code}')
-            save_response(resp)
-            flash('Shipment created', 'success')
+            save_response(resp.json(), lead_id, request_type=request_type)
+            flash(success, 'success')
         elif resp.status_code >= 400:
-            # TODO record in log or in DB
             current_app.logger.info(f'ERROR: resp code {resp.text}')
             flash(
                 f'ERROR: resp code -> {resp.status_code} , details: {resp.text}', 'danger')
+        else:
+            current_app.logger.info(f'UNKNOWN ERROR: resp code {resp.text}')
+            flash(
+                f'UNKNOWN ERROR: resp code -> {resp.status_code} , details: {resp.text}', 'danger')
 
     elif request.method == "GET":
         lead = get_lead(lead_id)
@@ -142,15 +127,34 @@ def create_shipment(lead_id='188602483043329'):
         form.recipients_address_line_1.data = addr_parser.get_address_line_1()
         form.recipients_stateOrProvinceCode.data = addr_parser.get_province_code()
         form.recipients_countryCode.data = addr_parser.get_country_code()
-        form.recipients_city.data = lead_data.get('address').get('city')
-        form.recipients_postalCode.data = lead_data.get(
-            'address').get('postal_code')
+        form.recipients_city.data = lead_data.get('address').get('city') or lead_data.get('address').get('city2')
+        form.recipients_postalCode.data = lead_data.get('address').get('postal_code')
         # package details
-        form.commodities_description.data = lead_data.get('description')
-        form.commodities_quantity.data = lead_data.get('total')
-        form.commodities_unit_price_amount.data = lead_data.get('price')
-        form.commodities_unit_currency.data = lead_data.get('currency').upper()
-        # form.commodities_unit_weight.data = lead_data.get()
-        # form.commodities_weight_units.data = lead_data.get('units')
+        form.commodities_quantity.data = 1
+        form.commodities_unit_price_amount.data = lead_data.get('price', 111)
+        form.commodities_unit_currency.data = lead_data.get('currency', 'USD').upper()
+        form.commodities_weight_units.data = 'KG'
+        form.commodities_size_units.data = 'CM'
+        size = int(lead_data.get('size', 2))
+        if size == 0:
+            form.commodities_unit_weight.data = 4
+            form.commodities_size_length.data = 45
+            form.commodities_size_width.data = 45
+            form.commodities_size_height.data = 9
+        elif size == 1:
+            form.commodities_unit_weight.data = 7
+            form.commodities_size_length.data = 63
+            form.commodities_size_width.data = 63
+            form.commodities_size_height.data = 9
+        elif size == 2:
+            form.commodities_unit_weight.data = 10
+            form.commodities_size_length.data = 90
+            form.commodities_size_width.data = 90
+            form.commodities_size_height.data = 9
+        else:
+            form.commodities_unit_weight.data = 7
+            form.commodities_size_length.data = 63
+            form.commodities_size_width.data = 63
+            form.commodities_size_height.data = 9
 
     return render_template('fedex_api/create_shipment.html', form=form)

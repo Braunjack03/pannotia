@@ -16,9 +16,11 @@ class FedExChoices:
     ]
 
     sh_purpose_choices = [
+        ('', 'Commercial'),
         ('GIFT', 'Gift'),
         ('NOT_SOLD', 'Not sold'),
         ('PERSONAL_EFFECTS', 'Personal Effects'),
+        ('PERSONAL_USER', 'Personal Users'),
         ('REPAIR_AND_RETURN', 'Repair and return'),
         ('SAMPLE', 'SAMPLE'),
     ]

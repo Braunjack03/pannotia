@@ -46,7 +46,7 @@
               {{ render_field(form.recipients_address_line_2) }}
 
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   {{ render_field(form.recipients_city) }}
                 </div>
                 <div class="col-md-2">
@@ -58,6 +58,11 @@
                 <div class="col-md-2">
                   {{ render_field(form.recipients_countryCode) }}
                 </div>
+                <div class="col-md-2">
+                    <br>
+                    Validate Address <br>
+                  {{ form.validate_address }}
+                </div>
               </div>
             </div>
           </div>
@@ -65,19 +70,19 @@
 
         <div class="accordion-item">
           <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-            <button 
-            class="accordion-button collapsed bg-light" 
-            type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#panelsStayOpen-collapseTwo" 
-            aria-expanded="false" 
+            <button
+            class="accordion-button collapsed bg-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#panelsStayOpen-collapseTwo"
+            aria-expanded="false"
             aria-controls="panelsStayOpen-collapseTwo">
               Package Details
             </button>
           </h2>
-          <div 
-          id="panelsStayOpen-collapseTwo" 
-          class="accordion-collapse collapse" 
+          <div
+          id="panelsStayOpen-collapseTwo"
+          class="accordion-collapse collapse"
           aria-labelledby="panelsStayOpen-headingTwo">
             <div class="accordion-body">
               {# package details #}
@@ -88,7 +93,7 @@
                 </div>
                 <div class="col-md-6">
                   {{ render_field(form.commodities_countryOfManufacture) }}
-                </div>        
+                </div>
               </div>
               <div class="row">
                 <div class="col-md-2">
@@ -109,7 +114,21 @@
                   {{ render_field(form.commodities_weight_units) }}
                 </div>
               </div>
-              
+              <div class="row">
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_size_length) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_size_width) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_size_height) }}
+                </div>
+                <div class="col-md-2">
+                  {{ render_field(form.commodities_size_units) }}
+                </div>
+              </div>
+
               {{ render_field(form.r_shipment_service_type) }}
               {{ render_field(form.r_shipment_packaging_type) }}
               {{ render_field(form.r_shipment_pickup_type) }}
@@ -147,11 +166,11 @@
           </div>
         </div>
       </div>
-      
-      
+
+
 
       {# {{ render_field(form.blockInsightVisibility) }} #}
-    
+
     <hr>
     <p><input class="btn btn-primary" type=submit value=Create>
   </form>

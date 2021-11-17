@@ -387,6 +387,16 @@ a:link, a:visited {
     cursor: default;
 }
 
+.ShippingButtons {
+    margin-top: 20px;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    justify-items: center;
+    pointer-events: all;
+    cursor: default;
+}
+
 .SendAction {
     margin: 5px 5px 5px 5px;
     color: #fafafa;

@@ -3,10 +3,27 @@
 
 """
 
+validate_address_json = {
+    "addressesToValidate": [{
+        "address": {
+            "streetLines":
+                [
+                    "7372 PARKRIDGE BLVD",
+                    "APT 286",
+                    "2903 sprank"
+                ],
+            "city": "IRVING",
+            "stateOrProvinceCode": "TX",
+            "postalCode": "75063-8659",
+            "countryCode": "US",
+        }
+    }
+    ]
+}
 
 create_shipment_json = {
 
-  'Custom_Shipment': """{
+    'Custom_Shipment': """{
     "labelResponseOptions": "URL_ONLY",
     "requestedShipment": {
       "shipper": {
@@ -35,7 +52,7 @@ create_shipment_json = {
           "contact": {
             "personName": "RECIPIENT NAME",
             "phoneNumber": 1234567890,
-            "companyName": "Recipient Company Name"
+            "companyName": ""
           },
           "address": {
             "streetLines": [
@@ -77,9 +94,9 @@ create_shipment_json = {
         },
         "commodities": [
           {
-            "description": "Commodity description",
+            "description": "Bespoke Map Art - Original Engravings, Framed",
             "harmonizedCode": "",
-            "countryOfManufacture": "",
+            "countryOfManufacture": "AU",
             "quantity": 1,
             "quantityUnits": "PCS",
             "unitPrice": {
@@ -129,7 +146,7 @@ create_shipment_json = {
   }
   """,
 
-  'International_Shipment': """{
+    'International_Shipment': """{
     "labelResponseOptions": "URL_ONLY",
     "requestedShipment": {
       "shipper": {
@@ -187,8 +204,8 @@ create_shipment_json = {
         "isDocumentOnly": true,
         "commodities": [
           {
-            "description": "Commodity description",
-            "countryOfManufacture": "US",
+            "description": "Bespoke Map Art - Original Engravings, Framed",
+            "countryOfManufacture": "AU",
             "quantity": 1,
             "quantityUnits": "PCS",
             "unitPrice": {
@@ -238,7 +255,7 @@ create_shipment_json = {
   }
   """,
 
-  'International_SingleShot_Multi_Piece_Shipment' : """
+    'International_SingleShot_Multi_Piece_Shipment': """
   {
     "labelResponseOptions": "URL_ONLY",
     "requestedShipment": {
@@ -297,8 +314,8 @@ create_shipment_json = {
         "isDocumentOnly": false,
         "commodities": [
           {
-            "description": "Commodity description",
-            "countryOfManufacture": "US",
+            "description": "Bespoke Map Art - Original Engravings, Framed",
+            "countryOfManufacture": "AU",
             "quantity": 3,
             "quantityUnits": "PCS",
             "unitPrice": {
@@ -357,7 +374,7 @@ create_shipment_json = {
     }
   }""",
 
-  'One_Rate_Shipment' : """{
+    'One_Rate_Shipment': """{
     "labelResponseOptions": "URL_ONLY",
     "requestedShipment": {
       "shipper": {
@@ -421,15 +438,12 @@ create_shipment_json = {
     }
   }""",
 
-
 }
-
-
 
 # =========== Validation
 validate_shipment_json = {
 
-  'Minimal_Sample_Domestic' : """{
+    'Minimal_Sample_Domestic': """{
     "requestedShipment": {
       "pickupType": "USE_SCHEDULED_PICKUP",
       "serviceType": "PRIORITY_OVERNIGHT",
@@ -493,5 +507,3 @@ validate_shipment_json = {
   """
 }
 # =========== END Validation
-
-
